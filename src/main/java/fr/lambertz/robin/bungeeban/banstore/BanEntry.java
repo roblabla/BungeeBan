@@ -15,6 +15,7 @@ public class BanEntry {
     private String source = "(Unknown)";
 	private Date expiry = null;
     private String reason = "Banned by an operator.";
+    private String server = "(GLOBAL)";
 
     public BanEntry(String banned) {
 		this.banned = banned;
@@ -70,5 +71,13 @@ public class BanEntry {
 
 	public void setReason(String reason) {
 		this.reason = reason;
+	}
+	
+	public String getServer() {
+		return server;
+	}
+	
+	public void setServer(String server) {
+		this.server = server;
 	}
 }

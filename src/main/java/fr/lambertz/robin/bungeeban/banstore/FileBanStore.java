@@ -4,30 +4,28 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.net.InetAddress;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Scanner;
 
 import net.md_5.bungee.api.ProxyServer;
 
 import fr.lambertz.robin.bungeeban.BungeeBan;
-import fr.lambertz.robin.bungeeban.util.InsensitiveStringMap;
 
 public class FileBanStore implements IBanStore {
-	private InsensitiveStringMap playerBanned;
-	private InsensitiveStringMap ipBanned;
+	private List<BanEntry> playerBanned;
+	private List<BanEntry> ipBanned;
 	private File fileplayer = new File(BungeeBan.configdir, "banned-players.txt");
 	private File fileip = new File(BungeeBan.configdir, "banned-ips.txt");
     public static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z");
 	
 	public FileBanStore() {
-		playerBanned = new InsensitiveStringMap();
-		ipBanned = new InsensitiveStringMap();
+		playerBanned = new ArrayList<BanEntry>();
+		ipBanned = new ArrayList<BanEntry>();
 		
 		// Create the files and directories if they don't exist
 		try {
@@ -41,14 +39,14 @@ public class FileBanStore implements IBanStore {
 			Scanner s = new Scanner(fileplayer);
 			while (s.hasNext()) {
 				String strentry = s.next();
-				playerBanned.put(strentry.split("|")[0].trim(), entryFromFile(strentry));
+				playerBanned.add(entryFromFile(strentry));
 			}
 			s.close();
 			
 			s = new Scanner(fileip);
 			while (s.hasNext()) {
 				String strentry = s.next();
-				ipBanned.put(strentry.split("|")[0].trim(), entryFromFile(strentry));
+				ipBanned.add(entryFromFile(strentry));
 			}
 			s.close();
 			
@@ -61,26 +59,75 @@ public class FileBanStore implements IBanStore {
 	}
 
 	@Override
-	public boolean isBanned(String player) {
-		this.removeExpired();
-		return playerBanned.containsKey(player);
+	public boolean isBanned(String player, String server) {
+		removeExpired();
+		for (BanEntry entry : playerBanned) {
+			boolean entrysrv = entry.getServer().equalsIgnoreCase(server) ||
+							 entry.getServer().equalsIgnoreCase("(GLOBAL)");
+			
+			if (entry.getBanned().equalsIgnoreCase(player) && entrysrv) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	@Override
+	public boolean isGBanned(String player) {
+		removeExpired();
+		for (BanEntry entry : playerBanned) {			
+			if (entry.getBanned().equalsIgnoreCase(player) 
+				&& entry.getServer().equalsIgnoreCase("(GLOBAL)")) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	@Override
-	public void ban(String banned, String banner, String reason) {
+	public void ban(String banned, String server, String banner, String reason) {
 		BanEntry newban = new BanEntry(banned);
+		newban.setServer(server);
 		if (reason != null && !reason.isEmpty())
 			newban.setReason(reason);
 			
 		if (banner != null && !banner.isEmpty())
 			newban.setSource(banner);
 
-		playerBanned.put(newban.getBanned(),newban);
+		playerBanned.add(newban);
+		save();
+	}
+	
+	@Override
+	public void gban(String banned, String banner, String reason) {
+		BanEntry newban = new BanEntry(banned);
+		if (reason != null && !reason.isEmpty())
+			newban.setReason(reason);
+		if (banner != null && !banner.isEmpty())
+			newban.setSource(banner);
+		
+		playerBanned.add(newban);
 		save();
 	}
 
 	@Override
-	public void tempban(String banned, String banner, String reason, Date until) {
+	public void tempban(String banned, String server, String banner, String reason, Date until) {
+		BanEntry newban = new BanEntry(banned);
+		newban.setServer(server);
+		if (reason != null && !reason.isEmpty())
+			newban.setReason(reason);
+		
+		if (banner != null && !banner.isEmpty())
+			newban.setSource(banner);
+		
+		newban.setExpiry(until);
+		
+		playerBanned.add(newban);
+		save();
+	}
+	
+	@Override
+	public void gtempban(String banned, String banner, String reason, Date until) {
 		BanEntry newban = new BanEntry(banned);
 		if (reason != null && !reason.isEmpty())
 			newban.setReason(reason);
@@ -90,7 +137,7 @@ public class FileBanStore implements IBanStore {
 		
 		newban.setExpiry(until);
 		
-		playerBanned.put(newban.getBanned(),newban);
+		playerBanned.add(newban);
 		save();
 	}
 
@@ -99,15 +146,49 @@ public class FileBanStore implements IBanStore {
 		playerBanned.remove(player);
 		save();
 	}
-
+	
 	@Override
-	public boolean isIPBanned(String address) {
-		this.removeExpired();
-		return ipBanned.containsKey(address);
+	public boolean isIPBanned(String address, String server) {
+		removeExpired();
+		for (BanEntry entry : ipBanned) {
+			boolean entrysrv = entry.getServer().equalsIgnoreCase(server) ||
+							 entry.getServer().equalsIgnoreCase("(GLOBAL)");
+			
+			if (entry.getBanned().equalsIgnoreCase(address) && entrysrv) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	@Override
-	public void banIP(String address, String banner, String reason) {
+	public boolean isGIPBanned(String address) {
+		removeExpired();
+		for (BanEntry entry : ipBanned) {			
+			if (entry.getBanned().equalsIgnoreCase(address) 
+				&& entry.getServer().equalsIgnoreCase("(GLOBAL)")) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	@Override
+	public void banIP(String address, String server, String banner, String reason) {
+		BanEntry newban = new BanEntry(address);
+		newban.setServer(server);
+		if (reason != null && !reason.isEmpty())
+			newban.setReason(reason);
+			
+		if (banner != null && !banner.isEmpty())
+			newban.setSource(banner);
+
+		ipBanned.add(newban);
+		save();
+	}
+	
+	@Override
+	public void gbanIP(String address, String banner, String reason) {
 		BanEntry newban = new BanEntry(address);
 		if (reason != null && !reason.isEmpty())
 			newban.setReason(reason);
@@ -115,12 +196,28 @@ public class FileBanStore implements IBanStore {
 		if (banner != null && !banner.isEmpty())
 			newban.setSource(banner);
 
-		ipBanned.put(newban.getBanned(),newban);
+		ipBanned.add(newban);
 		save();
 	}
 	
 	@Override
-	public void tempbanIP(String address, String banner, String reason, Date until) {
+	public void tempbanIP(String address, String server, String banner, String reason, Date until) {
+		BanEntry newban = new BanEntry(address);
+		newban.setServer(server);
+		if (reason != null && !reason.isEmpty())
+			newban.setReason(reason);
+		
+		if (banner != null && !banner.isEmpty())
+			newban.setSource(banner);
+		
+		newban.setExpiry(until);
+		
+		ipBanned.add(newban);
+		save();
+	}
+	
+	@Override
+	public void gtempbanIP(String address, String banner, String reason, Date until) {
 		BanEntry newban = new BanEntry(address);
 		if (reason != null && !reason.isEmpty())
 			newban.setReason(reason);
@@ -130,10 +227,10 @@ public class FileBanStore implements IBanStore {
 		
 		newban.setExpiry(until);
 		
-		ipBanned.put(newban.getBanned(),newban);
+		ipBanned.add(newban);
 		save();
 	}
-	
+
 	@Override
 	public void unbanIP(String address) {
 		ipBanned.remove(address);
@@ -141,12 +238,12 @@ public class FileBanStore implements IBanStore {
 	}
 
 	@Override
-	public Map getBanList() {
+	public List<BanEntry> getBanList() {
 		return playerBanned;
 	}
 
 	@Override
-	public Map getIPBanList() {
+	public List<BanEntry> getIPBanList() {
 		return ipBanned;
 	}
 	
@@ -154,21 +251,17 @@ public class FileBanStore implements IBanStore {
         try {
         	//save player bans
             PrintWriter printwriter = new PrintWriter(new FileWriter(this.fileplayer, false));
-            Iterator iterator = this.playerBanned.values().iterator();
 
-            while (iterator.hasNext()) {
-                BanEntry banentry = (BanEntry) iterator.next();
-                printwriter.println(entryToString(banentry));
+            for (BanEntry entry : playerBanned) {
+                printwriter.println(entryToString(entry));
             }
             printwriter.close();
             
             //save ip bans
             printwriter = new PrintWriter(new FileWriter(this.fileip, false));
-            iterator = this.ipBanned.values().iterator();
 
-            while (iterator.hasNext()) {
-                BanEntry banentry = (BanEntry) iterator.next();
-                printwriter.println(entryToString(banentry));
+            for (BanEntry entry : ipBanned) {
+                printwriter.println(entryToString(entry));
             }
             printwriter.close();
         } catch (IOException ioexception) {
@@ -177,10 +270,10 @@ public class FileBanStore implements IBanStore {
 	}
 	
 	private void removeExpired() {
-        Iterator iterator = this.playerBanned.values().iterator();
+        Iterator<BanEntry> iterator = this.playerBanned.iterator();
 
         while (iterator.hasNext()) {
-            BanEntry banentry = (BanEntry) iterator.next();
+            BanEntry banentry = iterator.next();
 
             if (banentry.hasExpired()) {
                 iterator.remove();
@@ -220,6 +313,10 @@ public class FileBanStore implements IBanStore {
 	    	return banentry;
 	    
 	    banentry.setReason(astring[4].trim());
+	    if (astring.length == 5)
+	    	return banentry;
+	    
+	    banentry.setServer(astring[5].trim());
 	    return banentry;
 	}
 	
@@ -235,6 +332,8 @@ public class FileBanStore implements IBanStore {
         stringbuilder.append(entry.getExpiry() == null ? "Forever" : dateFormat.format(entry.getExpiry()));
         stringbuilder.append("|");
         stringbuilder.append(entry.getReason());
+        stringbuilder.append("|");
+        stringbuilder.append(entry.getServer());
         return stringbuilder.toString();
 	}
 }

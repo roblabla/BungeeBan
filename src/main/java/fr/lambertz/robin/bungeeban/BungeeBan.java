@@ -20,6 +20,12 @@ import fr.lambertz.robin.bungeeban.banstore.FileBanStore;
 import fr.lambertz.robin.bungeeban.banstore.IBanStore;
 import fr.lambertz.robin.bungeeban.command.BanCommand;
 import fr.lambertz.robin.bungeeban.command.BanIpCommand;
+import fr.lambertz.robin.bungeeban.command.GBanCommand;
+import fr.lambertz.robin.bungeeban.command.GBanIpCommand;
+import fr.lambertz.robin.bungeeban.command.GTempBanCommand;
+import fr.lambertz.robin.bungeeban.command.GTempBanIpCommand;
+import fr.lambertz.robin.bungeeban.command.TempBanCommand;
+import fr.lambertz.robin.bungeeban.command.TempBanIpCommand;
 import fr.lambertz.robin.bungeeban.command.UnbanCommand;
 import fr.lambertz.robin.bungeeban.command.UnbanIpCommand;
 
@@ -56,8 +62,14 @@ public class BungeeBan extends Plugin implements Listener {
 			banstore = new FileBanStore();
 		ProxyServer.getInstance().getPluginManager().registerListener(this);
 		ProxyServer.getInstance().getPluginManager().registerCommand(new BanCommand(banstore));
-		ProxyServer.getInstance().getPluginManager().registerCommand(new BanIpCommand(banstore));
+		ProxyServer.getInstance().getPluginManager().registerCommand(new TempBanCommand(banstore));
+		ProxyServer.getInstance().getPluginManager().registerCommand(new GBanCommand(banstore));
+		ProxyServer.getInstance().getPluginManager().registerCommand(new GTempBanCommand(banstore));
 		ProxyServer.getInstance().getPluginManager().registerCommand(new UnbanCommand(banstore));
+		ProxyServer.getInstance().getPluginManager().registerCommand(new BanIpCommand(banstore));
+		ProxyServer.getInstance().getPluginManager().registerCommand(new TempBanIpCommand(banstore));
+		ProxyServer.getInstance().getPluginManager().registerCommand(new GBanIpCommand(banstore));
+		ProxyServer.getInstance().getPluginManager().registerCommand(new GTempBanIpCommand(banstore));
 		ProxyServer.getInstance().getPluginManager().registerCommand(new UnbanIpCommand(banstore));
 		ProxyServer.getInstance().getLogger().log(Level.INFO,"[BungeeBan] Now loaded.");
 	}
@@ -71,7 +83,7 @@ public class BungeeBan extends Plugin implements Listener {
 		// Checks if the one sending the message is the server.
 		if (e.getTag() != "BungeeBan" || !(e.getSender() instanceof Server))
 			return;
-		
+		String servername = ((Server)e.getSender()).getInfo().getName();
 		ByteArrayInputStream bytestream = new ByteArrayInputStream(e.getData());
 		DataInputStream datastream = new DataInputStream(bytestream);
 		try {
@@ -79,30 +91,30 @@ public class BungeeBan extends Plugin implements Listener {
 			if (method.equalsIgnoreCase("ban")) {
 				String bannedPlayer = readString(datastream);
 				if (datastream.available() == 0) {
-					banstore.ban(bannedPlayer,"","");
+					banstore.ban(bannedPlayer, servername, "", "");
 					return;
 				}
 				String banner = readString(datastream);
 				if (datastream.available() == 0) {
-					banstore.ban(bannedPlayer,banner,"");
+					banstore.ban(bannedPlayer,servername,banner,"");
 					return;
 				}
 				String reason = readString(datastream);
-				banstore.ban(bannedPlayer,banner,reason);
+				banstore.ban(bannedPlayer,servername,banner,reason);
 				
 			} else if (method.equalsIgnoreCase("banip")) {
 				String bannedIP = readString(datastream);
 				if (datastream.available() == 0) {
-					banstore.banIP(bannedIP,"","");
+					banstore.banIP(bannedIP,servername,"","");
 					return;
 				}
 				String banner = readString(datastream);
 				if (datastream.available() == 0) {
-					banstore.banIP(bannedIP,banner,"");
+					banstore.banIP(bannedIP,servername,banner,"");
 					return;
 				}
 				String reason = readString(datastream);
-				banstore.banIP(bannedIP,banner,reason);
+				banstore.banIP(bannedIP,servername,banner,reason);
 				
 			} else if (method.equalsIgnoreCase("unban")) {
 				String unbannedPlayer = readString(datastream);
