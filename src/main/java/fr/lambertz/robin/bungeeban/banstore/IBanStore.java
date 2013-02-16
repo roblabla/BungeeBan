@@ -21,6 +21,11 @@ public interface IBanStore {
 	boolean isIPBanned(String address, String server);
 	boolean isGIPBanned(String address);
 	
+	BanEntry getBan(String player, String server);
+	BanEntry getGBan(String player);
+	BanEntry getIPBan(String ip, String server);
+	BanEntry getGIPBan(String ip);
+	
 	/**
 	 * Adds the specified player to the banned players list, with a specified server.
 	 * @param player The player to ban.

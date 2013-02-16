@@ -13,9 +13,11 @@ import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.Server;
 import net.md_5.bungee.api.event.LoginEvent;
 import net.md_5.bungee.api.event.PluginMessageEvent;
+import net.md_5.bungee.api.event.ServerConnectEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.api.plugin.Plugin;
 
+import fr.lambertz.robin.bungeeban.banstore.BanEntry;
 import fr.lambertz.robin.bungeeban.banstore.FileBanStore;
 import fr.lambertz.robin.bungeeban.banstore.IBanStore;
 import fr.lambertz.robin.bungeeban.command.BanCommand;
@@ -133,8 +135,34 @@ public class BungeeBan extends Plugin implements Listener {
 		return;
 	}
 	
+	@Subscribe
 	public void onPlayerJoin(LoginEvent e) {
-
+		BanEntry ban = banstore.getGBan(e.getConnection().getName());
+		if (ban != null) {
+			e.setCancelReason(ban.getReason());
+			e.setCancelled(true);
+			return;
+		} 
+		ban = banstore.getGIPBan(e.getConnection().getAddress().getAddress().getHostAddress());
+		if (ban != null) {
+			e.setCancelReason(ban.getReason());
+			e.setCancelled(true);
+		}
+		return;
+	}
+	
+	@Subscribe
+	public void onServerConnect(ServerConnectEvent e) {
+		BanEntry ban = banstore.getBan(e.getPlayer().getName(), e.getTarget().getName());
+		if (ban != null) {
+			e.getPlayer().disconnect(ban.getReason());
+			return;
+		} 
+		ban = banstore.getIPBan(e.getPlayer().getAddress().getAddress().getHostAddress(), e.getTarget().getName());
+		if (ban != null) {
+			e.getPlayer().disconnect(ban.getReason());
+		}
+		return;
 	}
 	
 	private String readString(DataInputStream stream) throws IOException {

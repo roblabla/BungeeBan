@@ -11,6 +11,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
+import java.util.regex.Pattern;
 
 import net.md_5.bungee.api.ProxyServer;
 
@@ -38,14 +39,14 @@ public class FileBanStore implements IBanStore {
 			// Read the file and add the entries to the maps
 			Scanner s = new Scanner(fileplayer);
 			while (s.hasNext()) {
-				String strentry = s.next();
+				String strentry = s.nextLine();
 				playerBanned.add(entryFromFile(strentry));
 			}
 			s.close();
 			
 			s = new Scanner(fileip);
 			while (s.hasNext()) {
-				String strentry = s.next();
+				String strentry = s.nextLine();
 				ipBanned.add(entryFromFile(strentry));
 			}
 			s.close();
@@ -73,6 +74,20 @@ public class FileBanStore implements IBanStore {
 	}
 	
 	@Override
+	public BanEntry getBan(String player, String server) {
+		removeExpired();
+		for (BanEntry entry : playerBanned) {
+			boolean entrysrv = entry.getServer().equalsIgnoreCase(server) ||
+							 entry.getServer().equalsIgnoreCase("(GLOBAL)");
+			
+			if (entry.getBanned().equalsIgnoreCase(player) && entrysrv) {
+				return entry;
+			}
+		}
+		return null;	
+	}
+	
+	@Override
 	public boolean isGBanned(String player) {
 		removeExpired();
 		for (BanEntry entry : playerBanned) {			
@@ -83,7 +98,19 @@ public class FileBanStore implements IBanStore {
 		}
 		return false;
 	}
-
+	
+	@Override
+	public BanEntry getGBan(String player) {
+		removeExpired();
+		for (BanEntry entry : playerBanned) {			
+			if (entry.getBanned().equalsIgnoreCase(player) 
+				&& entry.getServer().equalsIgnoreCase("(GLOBAL)")) {
+				return entry;
+			}
+		}
+		return null;
+	}
+	
 	@Override
 	public void ban(String banned, String server, String banner, String reason) {
 		BanEntry newban = new BanEntry(banned);
@@ -160,7 +187,21 @@ public class FileBanStore implements IBanStore {
 		}
 		return false;
 	}
-
+	
+	@Override
+	public BanEntry getIPBan(String address, String server) {
+		removeExpired();
+		for (BanEntry entry : ipBanned) {
+			boolean entrysrv = entry.getServer().equalsIgnoreCase(server) ||
+							 entry.getServer().equalsIgnoreCase("(GLOBAL)");
+			
+			if (entry.getBanned().equalsIgnoreCase(address) && entrysrv) {
+				return entry;
+			}
+		}
+		return null;
+	}
+	
 	@Override
 	public boolean isGIPBanned(String address) {
 		removeExpired();
@@ -171,6 +212,18 @@ public class FileBanStore implements IBanStore {
 			}
 		}
 		return false;
+	}
+	
+	@Override
+	public BanEntry getGIPBan(String address) {
+		removeExpired();
+		for (BanEntry entry : ipBanned) {			
+			if (entry.getBanned().equalsIgnoreCase(address) 
+				&& entry.getServer().equalsIgnoreCase("(GLOBAL)")) {
+				return entry;
+			}
+		}
+		return null;
 	}
 	
 	@Override
@@ -282,7 +335,7 @@ public class FileBanStore implements IBanStore {
 	}
 
 	private BanEntry entryFromFile(String line) {
-		String[] astring = line.trim().split("|");
+		String[] astring = line.trim().split(Pattern.quote("|"));
 		BanEntry banentry = new BanEntry(astring[0].trim());
 	
 		// Support old-style banlist, one username per line.
