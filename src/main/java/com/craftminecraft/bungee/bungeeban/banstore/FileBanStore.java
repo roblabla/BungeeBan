@@ -1,4 +1,4 @@
-package fr.lambertz.robin.bungeeban.banstore;
+package com.craftminecraft.bungee.bungeeban.banstore;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -12,9 +12,10 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
+import com.craftminecraft.bungee.bungeeban.BungeeBan;
+
 import net.md_5.bungee.api.ProxyServer;
 
-import fr.lambertz.robin.bungeeban.BungeeBan;
 
 public class FileBanStore implements IBanStore {
 	private List<BanEntry> playerBanned;

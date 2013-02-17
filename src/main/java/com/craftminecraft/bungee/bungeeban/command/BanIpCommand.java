@@ -1,28 +1,22 @@
-package fr.lambertz.robin.bungeeban.command;
+package com.craftminecraft.bungee.bungeeban.command;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import com.craftminecraft.bungee.bungeeban.BanManager;
+import com.craftminecraft.bungee.bungeeban.banstore.BanEntry;
 
-import fr.lambertz.robin.bungeeban.BanManager;
-import fr.lambertz.robin.bungeeban.banstore.BanEntry;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 
-public class TempBanIpCommand extends Command {
-	private static SimpleDateFormat dateFormat = new SimpleDateFormat("d'd'k'h'm'm's's'");
-	
-	public TempBanIpCommand() {
-		super("tempbanip", "bungeeban.command.tempbanip");
+public class BanIpCommand extends Command {
+	public BanIpCommand() {
+		super("banip", "bungeeban.command.banip");
 	}
 	
-
 	@Override
 	public void execute(CommandSender sender, String[] args) {
 		ProxiedPlayer player;
 		BanEntry newban;
-		
 		if (sender instanceof ProxiedPlayer) {
 			player = (ProxiedPlayer) sender;
 		} else {
@@ -30,24 +24,17 @@ public class TempBanIpCommand extends Command {
 			return;
 		}
 		
-		if (args.length < 2) {
+		if (args.length < 1) {
 			sender.sendMessage(ChatColor.RED + "Wrong command format. <required> [optional]");
-			sender.sendMessage(ChatColor.RED + "/tempbanip <ip> <time> [reason]");
+			sender.sendMessage(ChatColor.RED + "/banip <ip> [reason]");
 			return;
 		}
 		
-		try {
-			newban = new BanEntry(args[0])
-						.setServer(player.getServer().getInfo().getName())
-						.setSource(sender.getName())
-						.setExpiry(dateFormat.parse(args[1]));
-		} catch (ParseException e) {
-			sender.sendMessage(ChatColor.RED + "Wrong time format.");
-			sender.sendMessage(ChatColor.RED + "#d#h#m#s");
-			return;
-		}
+		newban = new BanEntry(args[0])
+					.setServer(player.getServer().getInfo().getName())
+					.setSource(sender.getName()); 
 		
-		if (args.length > 2) {
+		if (args.length > 1) {
 			StringBuilder reasonBuilder = new StringBuilder();
 			for (int i = 1;i < args.length; i++) {
 				reasonBuilder.append(args[i]);

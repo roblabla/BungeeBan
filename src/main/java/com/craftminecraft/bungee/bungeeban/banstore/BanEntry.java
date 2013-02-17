@@ -1,4 +1,4 @@
-package fr.lambertz.robin.bungeeban.banstore;
+package com.craftminecraft.bungee.bungeeban.banstore;
 
 import java.util.Date;
 

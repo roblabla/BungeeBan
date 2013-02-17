@@ -1,9 +1,11 @@
-package fr.lambertz.robin.bungeeban;
+package com.craftminecraft.bungee.bungeeban;
 
 import java.io.File;
 import java.util.List;
 import java.util.logging.Level;
 
+import com.craftminecraft.bungee.bungeeban.banstore.*;
+import com.craftminecraft.bungee.bungeeban.command.*;
 import com.google.common.eventbus.Subscribe;
 
 import net.md_5.bungee.api.ProxyServer;
@@ -12,8 +14,6 @@ import net.md_5.bungee.api.event.ServerConnectEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.api.plugin.Plugin;
 
-import fr.lambertz.robin.bungeeban.banstore.*;
-import fr.lambertz.robin.bungeeban.command.*;
 
 public class BungeeBan extends Plugin implements Listener {
 	//private Map<?,?> config;

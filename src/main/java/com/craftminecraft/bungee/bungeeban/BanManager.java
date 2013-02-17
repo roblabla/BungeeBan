@@ -1,15 +1,16 @@
-package fr.lambertz.robin.bungeeban;
+package com.craftminecraft.bungee.bungeeban;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.craftminecraft.bungee.bungeeban.banstore.BanEntry;
+import com.craftminecraft.bungee.bungeeban.banstore.IBanStore;
+
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
-import fr.lambertz.robin.bungeeban.banstore.BanEntry;
-import fr.lambertz.robin.bungeeban.banstore.IBanStore;
 
 public class BanManager {
 	private static IBanStore banstore;

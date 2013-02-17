@@ -1,10 +1,11 @@
-package fr.lambertz.robin.bungeeban.command;
+package com.craftminecraft.bungee.bungeeban.command;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
-import fr.lambertz.robin.bungeeban.BanManager;
-import fr.lambertz.robin.bungeeban.banstore.BanEntry;
+import com.craftminecraft.bungee.bungeeban.BanManager;
+import com.craftminecraft.bungee.bungeeban.banstore.BanEntry;
+
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.plugin.Command;

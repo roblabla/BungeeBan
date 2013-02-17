@@ -1,21 +1,21 @@
-package fr.lambertz.robin.bungeeban.command;
+package com.craftminecraft.bungee.bungeeban.command;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
-import fr.lambertz.robin.bungeeban.BanManager;
-import fr.lambertz.robin.bungeeban.banstore.BanEntry;
+import com.craftminecraft.bungee.bungeeban.BanManager;
+import com.craftminecraft.bungee.bungeeban.banstore.BanEntry;
 
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 
-public class TempBanCommand extends Command {
+public class TempBanIpCommand extends Command {
 	private static SimpleDateFormat dateFormat = new SimpleDateFormat("d'd'k'h'm'm's's'");
 	
-	public TempBanCommand() {
-		super("tempban", "bungeeban.command.tempban");
+	public TempBanIpCommand() {
+		super("tempbanip", "bungeeban.command.tempbanip");
 	}
 	
 
@@ -33,7 +33,7 @@ public class TempBanCommand extends Command {
 		
 		if (args.length < 2) {
 			sender.sendMessage(ChatColor.RED + "Wrong command format. <required> [optional]");
-			sender.sendMessage(ChatColor.RED + "/tempban <username> <time> [reason]");
+			sender.sendMessage(ChatColor.RED + "/tempbanip <ip> <time> [reason]");
 			return;
 		}
 		
