@@ -94,11 +94,13 @@ public class FileBanStore implements IBanStore {
 	}
 	@Override
 	public List<BanEntry> getBanList() {
+		removeExpired();
 		return playerBanned;
 	}
 
 	@Override
 	public List<BanEntry> getIPBanList() {
+		removeExpired();
 		return ipBanned;
 	}
 	
