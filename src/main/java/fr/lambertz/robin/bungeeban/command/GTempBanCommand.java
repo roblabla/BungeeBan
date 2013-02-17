@@ -2,45 +2,50 @@ package fr.lambertz.robin.bungeeban.command;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 
-import fr.lambertz.robin.bungeeban.banstore.IBanStore;
+import fr.lambertz.robin.bungeeban.BanManager;
+import fr.lambertz.robin.bungeeban.banstore.BanEntry;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.plugin.Command;
 
 public class GTempBanCommand extends Command {
 	private static SimpleDateFormat dateFormat = new SimpleDateFormat("d'd'k'h'm'm's's'");
-	private IBanStore banstore;
 	
-	public GTempBanCommand(IBanStore banstore) {
+	public GTempBanCommand() {
 		super("gtempban", "bungeeban.command.gtempban");
-		this.banstore = banstore;
 	}
 	
 
 	@Override
 	public void execute(CommandSender sender, String[] args) {
-		Date date;
+		BanEntry newban;
+		
 		if (args.length < 2) {
 			sender.sendMessage(ChatColor.RED + "Wrong command format. <required> [optional]");
-			sender.sendMessage(ChatColor.RED + "/gtempban <username> <bantime> [reason]");
+			sender.sendMessage(ChatColor.RED + "/gtempban <ip> <time> [reason]");
 			return;
-		} else {
-			try {
-				date = dateFormat.parse(args[1]);
-			} catch (ParseException ex) {
-				return;
-			}
 		}
-		if (args.length == 2) {
-			banstore.gtempban(args[0], sender.getName(), "", date);
-		} else {
+		
+		try {
+			newban = new BanEntry(args[0])
+						.setGlobal()
+						.setSource(sender.getName())
+						.setExpiry(dateFormat.parse(args[1]));
+		} catch (ParseException e) {
+			sender.sendMessage(ChatColor.RED + "Wrong time format.");
+			sender.sendMessage(ChatColor.RED + "#d#h#m#s");
+			return;
+		} 
+		
+		if (args.length > 2) {
 			StringBuilder reasonBuilder = new StringBuilder();
-			for (int i = 2;i < args.length; i++) {
+			for (int i = 1;i < args.length; i++) {
 				reasonBuilder.append(args[i]);
 			}
-			banstore.gtempban(args[0],sender.getName(),reasonBuilder.toString(), date);
+			newban.setReason(reasonBuilder.toString());
 		}
+		BanManager.ban(newban);
+		sender.sendMessage(ChatColor.RED + newban.getBanned() + " has been banned.");
 	}
 }

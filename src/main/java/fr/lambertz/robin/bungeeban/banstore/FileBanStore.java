@@ -7,7 +7,6 @@ import java.io.PrintWriter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
@@ -56,240 +55,42 @@ public class FileBanStore implements IBanStore {
 			e.printStackTrace();
 			return;
 		}
-
-	}
-
-	@Override
-	public boolean isBanned(String player, String server) {
-		removeExpired();
-		for (BanEntry entry : playerBanned) {
-			boolean entrysrv = entry.getServer().equalsIgnoreCase(server) ||
-							 entry.getServer().equalsIgnoreCase("(GLOBAL)");
-			
-			if (entry.getBanned().equalsIgnoreCase(player) && entrysrv) {
-				return true;
-			}
-		}
-		return false;
 	}
 	
 	@Override
-	public BanEntry getBan(String player, String server) {
-		removeExpired();
-		for (BanEntry entry : playerBanned) {
-			boolean entrysrv = entry.getServer().equalsIgnoreCase(server) ||
-							 entry.getServer().equalsIgnoreCase("(GLOBAL)");
-			
-			if (entry.getBanned().equalsIgnoreCase(player) && entrysrv) {
-				return entry;
-			}
-		}
-		return null;	
-	}
-	
-	@Override
-	public boolean isGBanned(String player) {
-		removeExpired();
-		for (BanEntry entry : playerBanned) {			
-			if (entry.getBanned().equalsIgnoreCase(player) 
-				&& entry.getServer().equalsIgnoreCase("(GLOBAL)")) {
-				return true;
-			}
-		}
-		return false;
-	}
-	
-	@Override
-	public BanEntry getGBan(String player) {
-		removeExpired();
-		for (BanEntry entry : playerBanned) {			
-			if (entry.getBanned().equalsIgnoreCase(player) 
-				&& entry.getServer().equalsIgnoreCase("(GLOBAL)")) {
-				return entry;
-			}
-		}
-		return null;
-	}
-	
-	@Override
-	public void ban(String banned, String server, String banner, String reason) {
-		BanEntry newban = new BanEntry(banned);
-		newban.setServer(server);
-		if (reason != null && !reason.isEmpty())
-			newban.setReason(reason);
-			
-		if (banner != null && !banner.isEmpty())
-			newban.setSource(banner);
-
-		playerBanned.add(newban);
-		save();
-	}
-	
-	@Override
-	public void gban(String banned, String banner, String reason) {
-		BanEntry newban = new BanEntry(banned);
-		if (reason != null && !reason.isEmpty())
-			newban.setReason(reason);
-		if (banner != null && !banner.isEmpty())
-			newban.setSource(banner);
-		
-		playerBanned.add(newban);
+	public void ban(BanEntry entry) {
+		playerBanned.add(entry);
 		save();
 	}
 
 	@Override
-	public void tempban(String banned, String server, String banner, String reason, Date until) {
-		BanEntry newban = new BanEntry(banned);
-		newban.setServer(server);
-		if (reason != null && !reason.isEmpty())
-			newban.setReason(reason);
-		
-		if (banner != null && !banner.isEmpty())
-			newban.setSource(banner);
-		
-		newban.setExpiry(until);
-		
-		playerBanned.add(newban);
+	public void unban(String player, String server) {
+		playerBanned.remove(new BanEntry(player).setServer(server));
 		save();
 	}
 	
 	@Override
-	public void gtempban(String banned, String banner, String reason, Date until) {
-		BanEntry newban = new BanEntry(banned);
-		if (reason != null && !reason.isEmpty())
-			newban.setReason(reason);
-		
-		if (banner != null && !banner.isEmpty())
-			newban.setSource(banner);
-		
-		newban.setExpiry(until);
-		
-		playerBanned.add(newban);
+	public void gunban(String player) {
+		playerBanned.remove(new BanEntry(player).setGlobal());
 		save();
 	}
 
 	@Override
-	public void unban(String player) {
-		playerBanned.remove(player);
+	public void banIP(BanEntry entry) {
+		ipBanned.add(entry);
 		save();
 	}
 	
 	@Override
-	public boolean isIPBanned(String address, String server) {
-		removeExpired();
-		for (BanEntry entry : ipBanned) {
-			boolean entrysrv = entry.getServer().equalsIgnoreCase(server) ||
-							 entry.getServer().equalsIgnoreCase("(GLOBAL)");
-			
-			if (entry.getBanned().equalsIgnoreCase(address) && entrysrv) {
-				return true;
-			}
-		}
-		return false;
-	}
-	
-	@Override
-	public BanEntry getIPBan(String address, String server) {
-		removeExpired();
-		for (BanEntry entry : ipBanned) {
-			boolean entrysrv = entry.getServer().equalsIgnoreCase(server) ||
-							 entry.getServer().equalsIgnoreCase("(GLOBAL)");
-			
-			if (entry.getBanned().equalsIgnoreCase(address) && entrysrv) {
-				return entry;
-			}
-		}
-		return null;
-	}
-	
-	@Override
-	public boolean isGIPBanned(String address) {
-		removeExpired();
-		for (BanEntry entry : ipBanned) {			
-			if (entry.getBanned().equalsIgnoreCase(address) 
-				&& entry.getServer().equalsIgnoreCase("(GLOBAL)")) {
-				return true;
-			}
-		}
-		return false;
-	}
-	
-	@Override
-	public BanEntry getGIPBan(String address) {
-		removeExpired();
-		for (BanEntry entry : ipBanned) {			
-			if (entry.getBanned().equalsIgnoreCase(address) 
-				&& entry.getServer().equalsIgnoreCase("(GLOBAL)")) {
-				return entry;
-			}
-		}
-		return null;
-	}
-	
-	@Override
-	public void banIP(String address, String server, String banner, String reason) {
-		BanEntry newban = new BanEntry(address);
-		newban.setServer(server);
-		if (reason != null && !reason.isEmpty())
-			newban.setReason(reason);
-			
-		if (banner != null && !banner.isEmpty())
-			newban.setSource(banner);
-
-		ipBanned.add(newban);
+	public void unbanIP(String address, String server) {
+		ipBanned.remove(new BanEntry(address).setServer(server));
 		save();
 	}
-	
 	@Override
-	public void gbanIP(String address, String banner, String reason) {
-		BanEntry newban = new BanEntry(address);
-		if (reason != null && !reason.isEmpty())
-			newban.setReason(reason);
-			
-		if (banner != null && !banner.isEmpty())
-			newban.setSource(banner);
-
-		ipBanned.add(newban);
+	public void gunbanIP(String address) {
+		ipBanned.remove(new BanEntry(address).setGlobal());
 		save();
 	}
-	
-	@Override
-	public void tempbanIP(String address, String server, String banner, String reason, Date until) {
-		BanEntry newban = new BanEntry(address);
-		newban.setServer(server);
-		if (reason != null && !reason.isEmpty())
-			newban.setReason(reason);
-		
-		if (banner != null && !banner.isEmpty())
-			newban.setSource(banner);
-		
-		newban.setExpiry(until);
-		
-		ipBanned.add(newban);
-		save();
-	}
-	
-	@Override
-	public void gtempbanIP(String address, String banner, String reason, Date until) {
-		BanEntry newban = new BanEntry(address);
-		if (reason != null && !reason.isEmpty())
-			newban.setReason(reason);
-		
-		if (banner != null && !banner.isEmpty())
-			newban.setSource(banner);
-		
-		newban.setExpiry(until);
-		
-		ipBanned.add(newban);
-		save();
-	}
-
-	@Override
-	public void unbanIP(String address) {
-		ipBanned.remove(address);
-		save();
-	}
-
 	@Override
 	public List<BanEntry> getBanList() {
 		return playerBanned;

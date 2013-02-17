@@ -1,7 +1,5 @@
 package fr.lambertz.robin.bungeeban.banstore;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -21,6 +19,16 @@ public class BanEntry {
 		this.banned = banned;
 	}
 
+    public boolean equals(Object obj) {
+    	boolean result = false;
+    	if (obj instanceof BanEntry) {
+    		BanEntry otherBan = (BanEntry) obj;
+    		if (banned.equals(otherBan.getBanned()) && server.equals(otherBan.getServer())) {
+    			result = true;
+    		}
+    	}
+    	return result;
+    }
     /**
      * @return The banned player representing this entry
      */
@@ -39,8 +47,9 @@ public class BanEntry {
 	 * Sets the date at which this ban was made.
 	 * @param created
 	 */
-	public void setCreated(Date created) {
+	public BanEntry setCreated(Date created) {
 		this.created = created;
+		return this;
 	}
 
 	/**
@@ -50,34 +59,48 @@ public class BanEntry {
 		return source;
 	}
 
-	public void setSource(String source) {
+	public BanEntry setSource(String source) {
 		this.source = source;
+		return this;
 	}
 
 	public Date getExpiry() {
 		return expiry;
 	}
 
-	public void setExpiry(Date expiry) {
+	public BanEntry setExpiry(Date expiry) {
 		this.expiry = expiry;
+		return this;
 	}
 
 	public boolean hasExpired() {
 		return this.expiry == null ? false : new Date().after(this.expiry);
 	}
+	
 	public String getReason() {
 		return reason;
 	}
 
-	public void setReason(String reason) {
+	public BanEntry setReason(String reason) {
 		this.reason = reason;
+		return this;
 	}
 	
 	public String getServer() {
 		return server;
 	}
 	
-	public void setServer(String server) {
+	public boolean isGlobal() {
+		return server.equalsIgnoreCase("(GLOBAL)");
+	}
+	
+	public BanEntry setServer(String server) {
 		this.server = server;
+		return this;
+	}
+	
+	public BanEntry setGlobal() {
+		this.server = "(GLOBAL)";
+		return this;
 	}
 }
