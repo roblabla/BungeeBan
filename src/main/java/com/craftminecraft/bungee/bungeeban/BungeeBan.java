@@ -6,6 +6,7 @@ import java.util.logging.Level;
 
 import com.craftminecraft.bungee.bungeeban.banstore.*;
 import com.craftminecraft.bungee.bungeeban.command.*;
+import com.craftminecraft.bungee.bungeeban.listener.PluginMessageListener;
 import com.craftminecraft.bungee.bungeeban.listener.ProxiedPlayerListener;
 import com.google.common.eventbus.Subscribe;
 
@@ -47,6 +48,7 @@ public class BungeeBan extends Plugin implements Listener {
 		if (((String) config.get("store")).equalsIgnoreCase("mcfile"))*/
 			BanManager.setBanStore(new FileBanStore());
 		ProxyServer.getInstance().getPluginManager().registerListener(new ProxiedPlayerListener());
+		ProxyServer.getInstance().getPluginManager().registerListener(new PluginMessageListener());
 		ProxyServer.getInstance().getPluginManager().registerCommand(new BanCommand());
 		ProxyServer.getInstance().getPluginManager().registerCommand(new TempBanCommand());
 		ProxyServer.getInstance().getPluginManager().registerCommand(new GBanCommand());
@@ -63,69 +65,6 @@ public class BungeeBan extends Plugin implements Listener {
 	}
 	
 	public void onDisable() {
-		
+
 	}
-	
-/*	@Subscribe
-	public void onPluginmessage(PluginMessageEvent e) {
-		// Checks if the one sending the message is the server.
-		if (e.getTag() != "BungeeBan" || !(e.getSender() instanceof Server))
-			return;
-		String servername = ((Server)e.getSender()).getInfo().getName();
-		ByteArrayInputStream bytestream = new ByteArrayInputStream(e.getData());
-		DataInputStream datastream = new DataInputStream(bytestream);
-		try {
-			String method = readString(datastream);
-			if (method.equalsIgnoreCase("ban")) {
-				String bannedPlayer = readString(datastream);
-				if (datastream.available() == 0) {
-					banstore.ban(bannedPlayer, servername, "", "");
-					return;
-				}
-				String banner = readString(datastream);
-				if (datastream.available() == 0) {
-					banstore.ban(bannedPlayer,servername,banner,"");
-					return;
-				}
-				String reason = readString(datastream);
-				banstore.ban(bannedPlayer,servername,banner,reason);
-				
-			} else if (method.equalsIgnoreCase("banip")) {
-				String bannedIP = readString(datastream);
-				if (datastream.available() == 0) {
-					banstore.banIP(bannedIP,servername,"","");
-					return;
-				}
-				String banner = readString(datastream);
-				if (datastream.available() == 0) {
-					banstore.banIP(bannedIP,servername,banner,"");
-					return;
-				}
-				String reason = readString(datastream);
-				banstore.banIP(bannedIP,servername,banner,reason);
-				
-			} else if (method.equalsIgnoreCase("unban")) {
-				String unbannedPlayer = readString(datastream);
-				banstore.unban(unbannedPlayer);
-				
-			} else if (method.equalsIgnoreCase("unbanip")) {
-				String unbannedIP = readString(datastream);
-				banstore.unbanIP(unbannedIP);
-				
-			} else {
-				ProxyServer.getInstance().getLogger().warning("[BungeeBan] PluginMessage error");
-			}
-		} catch(IOException ex) {
-			
-		}
-		return;
-	}*/
-	
-/*	private String readString(DataInputStream stream) throws IOException {
-		short len = stream.readShort();
-		StringBuilder str = new StringBuilder();
-		for (int i=0;i<len;i++)
-			str.append(stream.readChar());
-		return str.toString();
-	}*/
 }
