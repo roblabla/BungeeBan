@@ -6,6 +6,7 @@ import java.util.logging.Level;
 
 import com.craftminecraft.bungee.bungeeban.banstore.*;
 import com.craftminecraft.bungee.bungeeban.command.*;
+import com.craftminecraft.bungee.bungeeban.listener.ProxiedPlayerListener;
 import com.google.common.eventbus.Subscribe;
 
 import net.md_5.bungee.api.ProxyServer;
@@ -45,7 +46,7 @@ public class BungeeBan extends Plugin implements Listener {
 		}
 		if (((String) config.get("store")).equalsIgnoreCase("mcfile"))*/
 			BanManager.setBanStore(new FileBanStore());
-		ProxyServer.getInstance().getPluginManager().registerListener(this);
+		ProxyServer.getInstance().getPluginManager().registerListener(new ProxiedPlayerListener());
 		ProxyServer.getInstance().getPluginManager().registerCommand(new BanCommand());
 		ProxyServer.getInstance().getPluginManager().registerCommand(new TempBanCommand());
 		ProxyServer.getInstance().getPluginManager().registerCommand(new GBanCommand());
@@ -119,42 +120,6 @@ public class BungeeBan extends Plugin implements Listener {
 		}
 		return;
 	}*/
-	
-	@Subscribe
-	public void onPlayerJoin(LoginEvent e) {
-		List<BanEntry> ban = BanManager.getBanList(e.getConnection().getName());
-		for(BanEntry entry : ban) {
-			if (entry.isGlobal()) {
-				e.setCancelled(true);
-				e.setCancelReason(entry.getReason());
-				return;
-			}
-		}
-		
-		ban = BanManager.getBanList(e.getConnection().getAddress().getAddress().getHostAddress());
-		for(BanEntry entry : ban) {
-			if (entry.isGlobal()) {
-				e.setCancelled(true);
-				e.setCancelReason(entry.getReason());
-				return;
-			}
-		}
-		return;
-	}
-	
-	@Subscribe
-	public void onServerConnect(ServerConnectEvent e) {
-		BanEntry ban = BanManager.getBan(e.getPlayer().getName(), e.getTarget().getName());
-		if (ban != null) {
-			e.getPlayer().disconnect(ban.getReason());
-			return;
-		} 
-		ban = BanManager.getBan(e.getPlayer().getAddress().getAddress().getHostAddress(), e.getTarget().getName());
-		if (ban != null) {
-			e.getPlayer().disconnect(ban.getReason());
-		}
-		return;
-	}
 	
 /*	private String readString(DataInputStream stream) throws IOException {
 		short len = stream.readShort();
