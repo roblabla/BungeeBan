@@ -13,7 +13,7 @@ public class GUnbanCommand extends Command {
 	}
 	@Override
 	public void execute(CommandSender sender, String[] args) {
-		if (args.length != 2) {
+		if (args.length != 1) {
 			sender.sendMessage(ChatColor.RED + "Wrong command format. <required> [optional]");
 			sender.sendMessage(ChatColor.RED + "/gunban <username>");
 			return;
