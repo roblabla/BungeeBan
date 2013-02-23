@@ -49,6 +49,7 @@ public class BungeeBan extends Plugin implements Listener {
 			BanManager.setBanStore(new FileBanStore());
 		ProxyServer.getInstance().getPluginManager().registerListener(new ProxiedPlayerListener());
 		ProxyServer.getInstance().getPluginManager().registerListener(new PluginMessageListener());
+		ProxyServer.getInstance().getPluginManager().registerCommand(new ReloadBansCommand());
 		ProxyServer.getInstance().getPluginManager().registerCommand(new BanCommand());
 		ProxyServer.getInstance().getPluginManager().registerCommand(new TempBanCommand());
 		ProxyServer.getInstance().getPluginManager().registerCommand(new GBanCommand());

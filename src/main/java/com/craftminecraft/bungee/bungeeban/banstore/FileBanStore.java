@@ -27,35 +27,7 @@ public class FileBanStore implements IBanStore {
 	public FileBanStore() {
 		playerBanned = new ArrayList<BanEntry>();
 		ipBanned = new ArrayList<BanEntry>();
-		
-		// Create the files and directories if they don't exist
-		try {
-			if ((!fileplayer.isFile() && !fileplayer.createNewFile()) || 
-				(!fileip.isFile() 	  && !fileip.createNewFile())) {
-				ProxyServer.getInstance().getLogger().severe("[BungeeBan] Error creating new file banned-ips.txt or banned-players.txt. Check your permissions.");
-				return;
-			}
-			
-			// Read the file and add the entries to the maps
-			Scanner s = new Scanner(fileplayer);
-			while (s.hasNext()) {
-				String strentry = s.nextLine();
-				playerBanned.add(entryFromFile(strentry));
-			}
-			s.close();
-			
-			s = new Scanner(fileip);
-			while (s.hasNext()) {
-				String strentry = s.nextLine();
-				ipBanned.add(entryFromFile(strentry));
-			}
-			s.close();
-			
-		} catch (Exception e) {
-			ProxyServer.getInstance().getLogger().severe("[BungeeBan] Could not load config file. Please send me the following stacktrace :");
-			e.printStackTrace();
-			return;
-		}
+		reloadBanList();
 	}
 	
 	@Override
@@ -192,5 +164,40 @@ public class FileBanStore implements IBanStore {
         stringbuilder.append("|");
         stringbuilder.append(entry.getServer());
         return stringbuilder.toString();
+	}
+
+	@Override
+	public void reloadBanList() {
+		playerBanned.clear();
+		ipBanned.clear();
+		// Create the files and directories if they don't exist
+		try {
+			if ((!fileplayer.isFile() && !fileplayer.createNewFile()) || 
+				(!fileip.isFile() 	  && !fileip.createNewFile())) {
+				ProxyServer.getInstance().getLogger().severe("[BungeeBan] Error creating new file banned-ips.txt or banned-players.txt. Check your permissions.");
+				return;
+			}
+			
+			// Read the file and add the entries to the maps
+			Scanner s = new Scanner(fileplayer);
+			while (s.hasNext()) {
+				String strentry = s.nextLine();
+				playerBanned.add(entryFromFile(strentry));
+			}
+			s.close();
+			
+			s = new Scanner(fileip);
+			while (s.hasNext()) {
+				String strentry = s.nextLine();
+				ipBanned.add(entryFromFile(strentry));
+			}
+			s.close();
+			
+		} catch (Exception e) {
+			ProxyServer.getInstance().getLogger().severe("[BungeeBan] Could not load config file. Please send me the following stacktrace :");
+			e.printStackTrace();
+			return;
+		}
+
 	}
 }

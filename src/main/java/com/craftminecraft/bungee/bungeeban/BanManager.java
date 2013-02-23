@@ -3,6 +3,7 @@ package com.craftminecraft.bungee.bungeeban;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import com.craftminecraft.bungee.bungeeban.banstore.BanEntry;
@@ -100,10 +101,17 @@ public class BanManager {
 				}
 			}
 		} catch (UnknownHostException e) {
-			ProxiedPlayer player = ProxyServer.getInstance().getPlayer(playerorip);
-			if (player != null)
-				player.disconnect(reason);
+			Collection<ProxiedPlayer> players = ProxyServer.getInstance().getPlayers();
+			for (ProxiedPlayer player : players) {
+				if (player.getName().equalsIgnoreCase(playerorip)) {
+					player.disconnect(reason);
+				}
+			}
 		}
+	}
+	
+	public static void reload() {
+		banstore.reloadBanList();
 	}
 	
 	private static boolean isIP(String playerorip) {

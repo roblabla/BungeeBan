@@ -49,7 +49,12 @@ public interface IBanStore {
 	 */
 	void gunbanIP(String ip);
 
-	
 	List<BanEntry> getBanList();
 	List<BanEntry> getIPBanList();
+	
+	/**
+	 * Reloads the list of bans from whatever storage into memory.
+	 * If no list is kept in memory, should just return without doing anything.
+	 */
+	void reloadBanList();
 }
