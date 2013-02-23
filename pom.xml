@@ -18,6 +18,7 @@
   	</dependency>
   </dependencies>
   <build>
+    <finalName>${artifactId}</finalName>
     <resources>
     	<resource>
         	<directory>src/main/resources</directory>
