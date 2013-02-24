@@ -105,6 +105,7 @@ public class BanManager {
 			for (ProxiedPlayer player : players) {
 				if (player.getName().equalsIgnoreCase(playerorip)) {
 					player.disconnect(reason);
+					return;
 				}
 			}
 		}
