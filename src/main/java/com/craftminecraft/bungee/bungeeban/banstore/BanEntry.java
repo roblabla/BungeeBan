@@ -23,7 +23,7 @@ public class BanEntry {
     	boolean result = false;
     	if (obj instanceof BanEntry) {
     		BanEntry otherBan = (BanEntry) obj;
-    		if (banned.equals(otherBan.getBanned()) && server.equals(otherBan.getServer())) {
+    		if (banned.equalsIgnoreCase(otherBan.getBanned()) && server.equalsIgnoreCase(otherBan.getServer())) {
     			result = true;
     		}
     	}
