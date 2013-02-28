@@ -1,0 +1,7 @@
+storagetype: file
+database:
+  address: localhost
+  port: 3306
+  name: minecraft
+  username: root
+  password: password

@@ -1,4 +1,4 @@
 name: BungeeBan
-main: com.craftminecraft.bungee.bungeeban.BungeeBan
+main: net.craftminecraft.bungee.bungeeban.BungeeBan
 version: ${pom.version}
 author: roblabla

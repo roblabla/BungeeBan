@@ -20,8 +20,8 @@ import net.md_5.bungee.api.ProxyServer;
 public class FileBanStore implements IBanStore {
 	private List<BanEntry> playerBanned;
 	private List<BanEntry> ipBanned;
-	private File fileplayer = new File("plugins" + File.pathSeparator + "BungeeBan", "banned-players.txt");
-	private File fileip = new File("plugins" + File.pathSeparator + "BungeeBan", "banned-ips.txt");
+	private File fileplayer = new File("plugins" + File.separator + "BungeeBan", "banned-players.txt");
+	private File fileip = new File("plugins" + File.separator + "BungeeBan", "banned-ips.txt");
     public static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z");
 	
 	public FileBanStore() {
