@@ -1,4 +1,4 @@
-package com.craftminecraft.bungee.bungeeban.banstore;
+package net.craftminecraft.bungee.bungeeban.banstore;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -12,16 +12,16 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
-import com.craftminecraft.bungee.bungeeban.BungeeBan;
 
+import net.craftminecraft.bungee.bungeeban.BungeeBan;
 import net.md_5.bungee.api.ProxyServer;
 
 
 public class FileBanStore implements IBanStore {
 	private List<BanEntry> playerBanned;
 	private List<BanEntry> ipBanned;
-	private File fileplayer = new File(BungeeBan.configdir, "banned-players.txt");
-	private File fileip = new File(BungeeBan.configdir, "banned-ips.txt");
+	private File fileplayer = new File("plugins" + File.pathSeparator + "BungeeBan", "banned-players.txt");
+	private File fileip = new File("plugins" + File.pathSeparator + "BungeeBan", "banned-ips.txt");
     public static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z");
 	
 	public FileBanStore() {

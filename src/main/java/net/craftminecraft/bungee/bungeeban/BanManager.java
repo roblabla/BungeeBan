@@ -1,4 +1,4 @@
-package com.craftminecraft.bungee.bungeeban;
+package net.craftminecraft.bungee.bungeeban;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -6,9 +6,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import com.craftminecraft.bungee.bungeeban.banstore.BanEntry;
-import com.craftminecraft.bungee.bungeeban.banstore.IBanStore;
 
+import net.craftminecraft.bungee.bungeeban.banstore.BanEntry;
+import net.craftminecraft.bungee.bungeeban.banstore.IBanStore;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 

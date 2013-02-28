@@ -1,25 +1,30 @@
-package com.craftminecraft.bungee.bungeeban;
+package net.craftminecraft.bungee.bungeeban;
 
 import java.io.File;
 import java.util.List;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import com.craftminecraft.bungee.bungeeban.banstore.*;
-import com.craftminecraft.bungee.bungeeban.command.*;
-import com.craftminecraft.bungee.bungeeban.listener.PluginMessageListener;
-import com.craftminecraft.bungee.bungeeban.listener.ProxiedPlayerListener;
 import com.google.common.eventbus.Subscribe;
 
+import net.craftminecraft.bungee.bungeeban.banstore.*;
+import net.craftminecraft.bungee.bungeeban.command.*;
+import net.craftminecraft.bungee.bungeeban.listener.PluginMessageListener;
+import net.craftminecraft.bungee.bungeeban.listener.ProxiedPlayerListener;
+//import net.craftminecraft.bungee.bungeeban.util.MainConfig;
+//import net.craftminecraft.bungee.bungeeban.util.PluginLogger;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.event.LoginEvent;
+import net.md_5.bungee.api.event.ProxyPingEvent;
 import net.md_5.bungee.api.event.ServerConnectEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.api.plugin.Plugin;
 
 
-public class BungeeBan extends Plugin implements Listener {
-	//private Map<?,?> config;
-	public static File configdir = new File("plugins/BungeeBan");
+public class BungeeBan extends Plugin {
+	//private MainConfig config;
+	private File configdir = new File("plugins" + File.pathSeparator + this.getDescription().getName());
+	//private Logger logger = null;
 	
 	public void onEnable() {
 		if (!configdir.exists())
@@ -46,7 +51,10 @@ public class BungeeBan extends Plugin implements Listener {
 			ProxyServer.getInstance().getLogger().severe("[BungeeBan] Top-level object in config.yml is not a Map");
 		}
 		if (((String) config.get("store")).equalsIgnoreCase("mcfile"))*/
-			BanManager.setBanStore(new FileBanStore());
+		//config = new MainConfig(this);
+		//this.logger = new PluginLogger(this);
+		
+		BanManager.setBanStore(new FileBanStore());
 		ProxyServer.getInstance().getPluginManager().registerListener(new ProxiedPlayerListener());
 		ProxyServer.getInstance().getPluginManager().registerListener(new PluginMessageListener());
 		ProxyServer.getInstance().getPluginManager().registerCommand(new ReloadBansCommand());
@@ -68,4 +76,8 @@ public class BungeeBan extends Plugin implements Listener {
 	public void onDisable() {
 
 	}
+	
+/*	public Logger getLogger() {
+		return this.logger;
+	}*/
 }

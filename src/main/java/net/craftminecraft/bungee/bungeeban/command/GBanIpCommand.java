@@ -1,15 +1,15 @@
-package com.craftminecraft.bungee.bungeeban.command;
+package net.craftminecraft.bungee.bungeeban.command;
 
-import com.craftminecraft.bungee.bungeeban.BanManager;
-import com.craftminecraft.bungee.bungeeban.banstore.BanEntry;
 
+import net.craftminecraft.bungee.bungeeban.BanManager;
+import net.craftminecraft.bungee.bungeeban.banstore.BanEntry;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.plugin.Command;
 
-public class GBanCommand extends Command {
-	public GBanCommand() {
-		super("gban", "bungeeban.command.gban");
+public class GBanIpCommand extends Command {
+	public GBanIpCommand() {
+		super("gbanip", "bungeeban.command.gbanip");
 	}
 	
 	@Override
@@ -18,7 +18,7 @@ public class GBanCommand extends Command {
 		
 		if (args.length < 1) {
 			sender.sendMessage(ChatColor.RED + "Wrong command format. <required> [optional]");
-			sender.sendMessage(ChatColor.RED + "/gban <username> [reason]");
+			sender.sendMessage(ChatColor.RED + "/gbanip <ip> [reason]");
 			return;
 		}
 		

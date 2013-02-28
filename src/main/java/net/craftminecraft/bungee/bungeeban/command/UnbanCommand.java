@@ -1,16 +1,16 @@
-package com.craftminecraft.bungee.bungeeban.command;
+package net.craftminecraft.bungee.bungeeban.command;
 
-import com.craftminecraft.bungee.bungeeban.BanManager;
 
+import net.craftminecraft.bungee.bungeeban.BanManager;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 
-public class UnbanIpCommand extends Command {
+public class UnbanCommand extends Command {
 
-	public UnbanIpCommand() {
-		super("unbanip", "bungeeban.command.unbanip");
+	public UnbanCommand() {
+		super("unban", "bungeeban.command.unban");
 	}
 	@Override
 	public void execute(CommandSender sender, String[] args) {
@@ -23,7 +23,7 @@ public class UnbanIpCommand extends Command {
 		}
 		if (args.length != 1) {
 			sender.sendMessage(ChatColor.RED + "Wrong command format. <required> [optional]");
-			sender.sendMessage(ChatColor.RED + "/unbanip <ip>");
+			sender.sendMessage(ChatColor.RED + "/unban <username>");
 			return;
 		} 
 		BanManager.unban(args[0], player.getServer().getInfo().getName());

@@ -1,4 +1,4 @@
-package com.craftminecraft.bungee.bungeeban.banstore;
+package net.craftminecraft.bungee.bungeeban.banstore;
 
 import java.util.Date;
 

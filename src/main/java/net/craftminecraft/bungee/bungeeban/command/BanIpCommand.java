@@ -1,8 +1,8 @@
-package com.craftminecraft.bungee.bungeeban.command;
+package net.craftminecraft.bungee.bungeeban.command;
 
-import com.craftminecraft.bungee.bungeeban.BanManager;
-import com.craftminecraft.bungee.bungeeban.banstore.BanEntry;
 
+import net.craftminecraft.bungee.bungeeban.BanManager;
+import net.craftminecraft.bungee.bungeeban.banstore.BanEntry;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;

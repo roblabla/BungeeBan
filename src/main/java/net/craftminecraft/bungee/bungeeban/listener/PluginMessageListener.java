@@ -1,4 +1,4 @@
-package com.craftminecraft.bungee.bungeeban.listener;
+package net.craftminecraft.bungee.bungeeban.listener;
 
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
@@ -6,10 +6,10 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
-import com.craftminecraft.bungee.bungeeban.BanManager;
-import com.craftminecraft.bungee.bungeeban.banstore.BanEntry;
 import com.google.common.eventbus.Subscribe;
 
+import net.craftminecraft.bungee.bungeeban.BanManager;
+import net.craftminecraft.bungee.bungeeban.banstore.BanEntry;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.Server;
 import net.md_5.bungee.api.event.PluginMessageEvent;
