@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>fr.lambertz.robin.bungee</groupId>
   <artifactId>BungeeBan</artifactId>
-  <version>0.2-b${build.number}</version>
+  <version>0.4-b${build.number}</version>
   <repositories>
     <repository>
       <id>localhost</id>
