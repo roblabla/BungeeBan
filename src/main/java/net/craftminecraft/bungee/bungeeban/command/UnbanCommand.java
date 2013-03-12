@@ -19,14 +19,14 @@ public class UnbanCommand extends Command {
 		if (sender instanceof ProxiedPlayer) {
 			if (args.length < 1 || args.length > 2) {
 				sender.sendMessage(ChatColor.RED + "Wrong command format. <required> [optional]");
-				sender.sendMessage(ChatColor.RED + "/unban [server] <username>");
+				sender.sendMessage(ChatColor.RED + "/unban <username> [server]");
 				return;
 			}
 			player = (ProxiedPlayer) sender;
 		} else {
 			if (args.length != 2) {
 				sender.sendMessage(ChatColor.RED + "Wrong command format. <required> [optional]");
-				sender.sendMessage(ChatColor.RED + "/unban <server> <username>");
+				sender.sendMessage(ChatColor.RED + "/unban <username> <server>");
 				return;
 			}
 		}

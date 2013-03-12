@@ -13,8 +13,8 @@
       </properties>
     </profile>
   </profiles>
-  <groupId>fr.lambertz.robin.bungee</groupId>
-  <artifactId>BungeeBan</artifactId>
+  <groupId>net.craftminecraft.bungee</groupId>
+  <artifactId>bungeeban</artifactId>
   <version>0.5-b${build.number}</version>
   <repositories>
     <repository>
