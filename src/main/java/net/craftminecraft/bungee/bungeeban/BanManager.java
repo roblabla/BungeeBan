@@ -9,6 +9,8 @@ import java.util.List;
 
 import net.craftminecraft.bungee.bungeeban.banstore.BanEntry;
 import net.craftminecraft.bungee.bungeeban.banstore.IBanStore;
+import net.craftminecraft.bungee.bungeeban.util.MainConfig;
+import net.craftminecraft.bungee.bungeeban.util.Utils;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
@@ -23,32 +25,39 @@ public class BanManager {
 		BanManager.banstore = banstore;
 	}
 	
-	public static void ban(BanEntry entry) {
-		if (isIP(entry.getBanned()))
-			banstore.banIP(entry);
-		else
-			banstore.ban(entry);
-	//	if (entry.isGlobal())
-			kick(entry.getBanned(), entry.getReason());
-		/*
-		else
-			returnToLobby(entry.getBanned());
-		will be implemented when config is done.
-		*/
+	public static boolean ban(BanEntry entry) {
+		kick(entry.getBanned(), entry.getReason());
+		String type = "ban";
+		type += (entry.isIPBan()) ? "ip" : "";
+		type = type + ((entry.isTempBan()) ? "temp" : "");
+		type = type + ((entry.isGlobal()) ? "g" : "");
+		if (banstore.ban(entry)) {
+			for (ProxiedPlayer player : ProxyServer.getInstance().getPlayers()) {
+				if (player.getServer().getInfo().getName().equals(entry.getServer())
+					|| entry.isGlobal() 
+					|| MainConfig.getInstance().message_sendLocalMsgGlobally) {
+					if (Utils.hasPermission(player, "see", type))
+						player.sendMessage(Utils.formatMessage(MainConfig.getInstance().getMessageByType(type), entry));
+				}
+			}
+			return true;
+		} else {
+			return false;
+		}
 	}
 	
 	public static BanEntry getBan(String playerorip, String server) {
 		if (isIP(playerorip)) {
 			for (BanEntry entry : banstore.getIPBanList()) {
 				if (entry.getBanned().equalsIgnoreCase(playerorip) 
-						&& entry.getServer().equalsIgnoreCase(server)) {
+					&& entry.getServer().equalsIgnoreCase(server)) {
 					return entry;
 				}
 			}
 		} else {
 			for (BanEntry entry : banstore.getBanList()) {
 				if (entry.getBanned().equalsIgnoreCase(playerorip) 
-						&& entry.getServer().equalsIgnoreCase(server)) {
+					&& entry.getServer().equalsIgnoreCase(server)) {
 					return entry;
 				}
 			}
@@ -74,18 +83,60 @@ public class BanManager {
 		return entries;
 	}
 	
-	public static void gunban(String playerorip) {
-		if (isIP(playerorip))
-			banstore.gunbanIP(playerorip);
-		else
-			banstore.gunban(playerorip);
+	public static boolean gunban(String playerorip) {
+		BanEntry.Builder builder = new BanEntry.Builder(playerorip).global();
+		BanEntry entry;
+		if (isIP(playerorip)) {
+			entry = builder.ipban().build();
+			if(banstore.gunbanIP(playerorip)) {
+				for (ProxiedPlayer player : ProxyServer.getInstance().getPlayers()) {
+					if (Utils.hasPermission(player, "see", "gunbanip"))
+						player.sendMessage(Utils.formatMessage(MainConfig.getInstance().getMessageByType("gunbanip"), entry));
+				}
+				return true;
+			}
+		} else {
+			entry = builder.build();
+			if (banstore.gunban(playerorip)) {
+				for (ProxiedPlayer player : ProxyServer.getInstance().getPlayers()) {
+					if (Utils.hasPermission(player, "see", "gunban"))
+						player.sendMessage(Utils.formatMessage(MainConfig.getInstance().getMessageByType("gunban"), entry));
+				}
+				return true;
+			}
+		}
+		return false;
 	}
 	
-	public static void unban(String playerorip, String server) {
-		if (isIP(playerorip))
-			banstore.unbanIP(playerorip, server);
-		else
-			banstore.unban(playerorip, server);
+	public static boolean unban(String playerorip, String server) {
+		BanEntry.Builder builder = new BanEntry.Builder(playerorip, server);
+		BanEntry entry;
+		if (isIP(playerorip)) {
+			entry = builder.ipban().build();
+			if (banstore.unbanIP(playerorip, server)) {
+				for (ProxiedPlayer player : ProxyServer.getInstance().getPlayers()) {
+					if ((MainConfig.getInstance().message_sendLocalMsgGlobally
+						|| player.getServer().getInfo().getName().equalsIgnoreCase(server))
+						&& Utils.hasPermission(player, "see", "unbanip")) {
+						player.sendMessage(Utils.formatMessage(MainConfig.getInstance().getMessageByType("unbanip"), entry));
+					}
+				}
+				return true;
+			}
+		} else {
+			entry = builder.build();
+			if (banstore.unban(playerorip, server)) {
+				for (ProxiedPlayer player : ProxyServer.getInstance().getPlayers()) {
+					if ((player.getServer().getInfo().getName().equalsIgnoreCase(server)
+						|| MainConfig.getInstance().message_sendLocalMsgGlobally)
+						&& Utils.hasPermission(player, "see", "unban")) {
+						player.sendMessage(Utils.formatMessage(MainConfig.getInstance().getMessageByType("unban"), entry));
+					}
+				}
+			return true;
+			}
+		}
+		return false;
 	}
 	
 	public static void kick(String playerorip) {
@@ -115,7 +166,7 @@ public class BanManager {
 		banstore.reloadBanList();
 	}
 	
-	private static boolean isIP(String playerorip) {
+	public static boolean isIP(String playerorip) {
 		try {
 			InetAddress.getByName(playerorip);
 			return true;

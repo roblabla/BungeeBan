@@ -29,58 +29,58 @@ public class PluginMessageListener implements Listener {
 		try {
 			String method = datastream.readUTF();
 			if (method.equalsIgnoreCase("ban")) {
-				BanEntry entry = new BanEntry(datastream.readUTF());
-				entry.setServer(datastream.readUTF())
-					.setSource(datastream.readUTF())
-					.setReason(datastream.readUTF());
-				BanManager.ban(entry);
+				BanEntry.Builder entry = new BanEntry.Builder(datastream.readUTF());
+				entry.server(datastream.readUTF())
+					.source(datastream.readUTF())
+					.reason(datastream.readUTF());
+				BanManager.ban(entry.build());
 				return;
 			} else if(method.equalsIgnoreCase("banip")) {
-				BanEntry entry = new BanEntry(datastream.readUTF())
-										.setServer(datastream.readUTF())
-										.setSource(datastream.readUTF())
-										.setReason(datastream.readUTF());
-				BanManager.ban(entry);
+				BanEntry.Builder entry = new BanEntry.Builder(datastream.readUTF())
+										.server(datastream.readUTF())
+										.source(datastream.readUTF())
+										.reason(datastream.readUTF());
+				BanManager.ban(entry.build());
 			} else if (method.equalsIgnoreCase("gban")) {
-				BanEntry entry = new BanEntry(datastream.readUTF())
-										.setGlobal()
-										.setSource(datastream.readUTF())
-										.setReason(datastream.readUTF());
-				BanManager.ban(entry);
+				BanEntry.Builder entry = new BanEntry.Builder(datastream.readUTF())
+										.global()
+										.source(datastream.readUTF())
+										.reason(datastream.readUTF());
+				BanManager.ban(entry.build());
 			} else if (method.equalsIgnoreCase("gbanip")) {
-				BanEntry entry = new BanEntry(datastream.readUTF())
-										.setGlobal()
-										.setSource(datastream.readUTF())
-										.setReason(datastream.readUTF());
-				BanManager.ban(entry);
+				BanEntry.Builder entry = new BanEntry.Builder(datastream.readUTF())
+										.global()
+										.source(datastream.readUTF())
+										.reason(datastream.readUTF());
+				BanManager.ban(entry.build());
 			} else if (method.equalsIgnoreCase("gtempban")) {
-				BanEntry entry = new BanEntry(datastream.readUTF())
-										.setGlobal()
-										.setSource(datastream.readUTF())
-										.setReason(datastream.readUTF())
-										.setExpiry(dateFormat.parse(datastream.readUTF()));
-				BanManager.ban(entry);
+				BanEntry.Builder entry = new BanEntry.Builder(datastream.readUTF())
+										.global()
+										.source(datastream.readUTF())
+										.reason(datastream.readUTF())
+										.expiry(dateFormat.parse(datastream.readUTF()));
+				BanManager.ban(entry.build());
 			} else if (method.equalsIgnoreCase("gtempbanip")) {
-				BanEntry entry = new BanEntry(datastream.readUTF())
-										.setGlobal()
-										.setSource(datastream.readUTF())
-										.setReason(datastream.readUTF())
-										.setExpiry(dateFormat.parse(datastream.readUTF()));
-				BanManager.ban(entry);
+				BanEntry.Builder entry = new BanEntry.Builder(datastream.readUTF())
+										.global()
+										.source(datastream.readUTF())
+										.reason(datastream.readUTF())
+										.expiry(dateFormat.parse(datastream.readUTF()));
+				BanManager.ban(entry.build());
 			} else if (method.equalsIgnoreCase("tempban")) {
-				BanEntry entry = new BanEntry(datastream.readUTF())
-										.setServer(datastream.readUTF())
-										.setSource(datastream.readUTF())
-										.setReason(datastream.readUTF())
-										.setExpiry(dateFormat.parse(datastream.readUTF()));
-				BanManager.ban(entry);
+				BanEntry.Builder entry = new BanEntry.Builder(datastream.readUTF())
+										.server(datastream.readUTF())
+										.source(datastream.readUTF())
+										.reason(datastream.readUTF())
+										.expiry(dateFormat.parse(datastream.readUTF()));
+				BanManager.ban(entry.build());
 			} else if (method.equalsIgnoreCase("tempbanip")) {
-				BanEntry entry = new BanEntry(datastream.readUTF())
-										.setServer(datastream.readUTF())
-										.setSource(datastream.readUTF())
-										.setReason(datastream.readUTF())
-										.setExpiry(dateFormat.parse(datastream.readUTF()));
-				BanManager.ban(entry);
+				BanEntry.Builder entry = new BanEntry.Builder(datastream.readUTF())
+										.server(datastream.readUTF())
+										.source(datastream.readUTF())
+										.reason(datastream.readUTF())
+										.expiry(dateFormat.parse(datastream.readUTF()));
+				BanManager.ban(entry.build());
 			} else if (method.equalsIgnoreCase("unban") || method.equalsIgnoreCase("unbanip")) {
 				BanManager.unban(datastream.readUTF(), datastream.readUTF());
 			} else if (method.equalsIgnoreCase("gunban") || method.equalsIgnoreCase("gunbanip")) {

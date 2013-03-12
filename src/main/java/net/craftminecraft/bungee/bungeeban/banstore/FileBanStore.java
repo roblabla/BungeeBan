@@ -31,39 +31,59 @@ public class FileBanStore implements IBanStore {
 	}
 	
 	@Override
-	public void ban(BanEntry entry) {
-		playerBanned.add(entry);
+	public boolean ban(BanEntry entry) {
+		if (entry.isIPBan())
+			playerBanned.add(entry);
+		else
+			ipBanned.add(entry);
 		save();
+		return true;
 	}
 
 	@Override
-	public void unban(String player, String server) {
-		playerBanned.remove(new BanEntry(player).setServer(server));
-		save();
+	public boolean unban(String player, String server) {
+		BanEntry entry = new BanEntry.Builder(player).server(server).build();
+		if (playerBanned.contains(entry)) {
+			playerBanned.remove(entry);
+			save();
+			return true;
+		}
+		return false;
 	}
 	
 	@Override
-	public void gunban(String player) {
-		playerBanned.remove(new BanEntry(player).setGlobal());
-		save();
+	public boolean gunban(String player) {
+		BanEntry entry = new BanEntry.Builder(player).global().build();
+		if (playerBanned.contains(entry)) {
+			playerBanned.remove(entry);
+			save();
+			return true;
+		}
+		return false;
 	}
 
 	@Override
-	public void banIP(BanEntry entry) {
-		ipBanned.add(entry);
-		save();
+	public boolean unbanIP(String address, String server) {
+		BanEntry entry = new BanEntry.Builder(address).server(server).ipban().build();
+		if (playerBanned.contains(entry)) {
+			playerBanned.remove(entry);
+			save();
+			return true;
+		}
+		return false;
 	}
 	
 	@Override
-	public void unbanIP(String address, String server) {
-		ipBanned.remove(new BanEntry(address).setServer(server));
-		save();
+	public boolean gunbanIP(String address) {
+		BanEntry entry = new BanEntry.Builder(address).global().ipban().build();
+		if (playerBanned.contains(entry)) {
+			playerBanned.remove(entry);
+			save();
+			return true;
+		}
+		return false;	
 	}
-	@Override
-	public void gunbanIP(String address) {
-		ipBanned.remove(new BanEntry(address).setGlobal());
-		save();
-	}
+	
 	@Override
 	public List<BanEntry> getBanList() {
 		removeExpired();
@@ -112,41 +132,41 @@ public class FileBanStore implements IBanStore {
 
 	private BanEntry entryFromFile(String line) {
 		String[] astring = line.trim().split(Pattern.quote("|"));
-		BanEntry banentry = new BanEntry(astring[0].trim());
+		BanEntry.Builder banentry = new BanEntry.Builder(astring[0].trim());
 	
 		// Support old-style banlist, one username per line.
 	    if (astring.length == 1)
-	        return banentry;
+	        return banentry.build();
 	
 	    try {
-	   		banentry.setCreated(dateFormat.parse(astring[1].trim()));
+	   		banentry.created(dateFormat.parse(astring[1].trim()));
 	   	} catch (ParseException parseexception) {
-	   		ProxyServer.getInstance().getLogger().severe("[BungeeBan] Could not read creation date format for ban entry '" + banentry.getBanned() + "'.");
+	   		ProxyServer.getInstance().getLogger().severe("[BungeeBan] Could not read creation date format for ban entry '" + astring[0].trim() + "'.");
 	    }
 	   	if (astring.length == 2) 
-	    	return banentry;
+	    	return banentry.build();
 	
-	    banentry.setSource(astring[2].trim());
+	    banentry.source(astring[2].trim());
 	    if (astring.length == 3)
-	    	return banentry;
+	    	return banentry.build();
 	
 	    try {
 	    	String expiry = astring[3].trim();
 	    	if (!expiry.equalsIgnoreCase("Forever") && expiry.length() > 0)
-	    		banentry.setExpiry(dateFormat.parse(expiry));
+	    		banentry.expiry(dateFormat.parse(expiry));
 	    
 	    } catch (ParseException parseexception1) {
-	    	System.out.println("Could not read expiry date format for ban entry '" + banentry.getBanned() + "'");
+	    	System.out.println("Could not read expiry date format for ban entry '" + astring[0].trim() + "'");
 	    }
 	    if (astring.length == 4)
-	    	return banentry;
+	    	return banentry.build();
 	    
-	    banentry.setReason(astring[4].trim());
+	    banentry.reason(astring[4].trim());
 	    if (astring.length == 5)
-	    	return banentry;
+	    	return banentry.build();
 	    
-	    banentry.setServer(astring[5].trim());
-	    return banentry;
+	    banentry.server(astring[5].trim());
+	    return banentry.build();
 	}
 	
 	public String entryToString(BanEntry entry) {

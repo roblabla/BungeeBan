@@ -55,9 +55,10 @@ public class MySQLBanStore implements IBanStore {
 	}
 	
 	@Override
-	public void ban(BanEntry entry) {
+	public boolean ban(BanEntry entry) {
 		try {
-			PreparedStatement stmt = connection.prepare("INSERT INTO bungeeban_playerbans" +
+			PreparedStatement stmt = connection.prepare("INSERT INTO bungeeban_" + 
+														(entry.isIPBan() ? "ipbans" : "playerbans") +
 														"(banned,server,created,source,reason,expiry) " +
 														"VALUES (?,?,?,?,?,?)");
 			stmt.setString(1,entry.getBanned());
@@ -71,81 +72,69 @@ public class MySQLBanStore implements IBanStore {
 				stmt.setString(6, dateFormat.format(entry.getExpiry()));
 
 			connection.query(stmt);
+			return true;
 		} catch (SQLException e) {
 			logger.severe("Ban failed, " + e.getMessage());
+			return false;
 		}
 	}
 
 	@Override
-	public void banIP(BanEntry entry) {
-		try {
-			PreparedStatement stmt = connection.prepare("INSERT INTO bungeeban_playerbans" +
-														"(banned,server,created,source,reason,expiry) " +
-														"VALUES (?,?,?,?,?,?)");
-			stmt.setString(1,entry.getBanned());
-			stmt.setString(2,entry.getServer());
-			stmt.setString(3,dateFormat.format(entry.getCreated()));
-			stmt.setString(4,entry.getSource());
-			stmt.setString(5,entry.getReason());
-			if (entry.getExpiry() == null)
-				stmt.setNull(6, Types.VARCHAR);
-			else
-				stmt.setString(6, dateFormat.format(entry.getExpiry()));
-
-			connection.query(stmt);
-		} catch (SQLException e) {
-			logger.log(Level.SEVERE, "BanIP Failed. ", e);
-		}
-	}
-
-	@Override
-	public void unban(String player, String server) {
+	public boolean unban(String player, String server) {
 		PreparedStatement stmt;
 		try {
 			stmt = connection.prepare("DELETE FROM bungeeban_playerbans WHERE banned = ? AND server = ?");
 			stmt.setString(1, player);
 			stmt.setString(2, server);
 			connection.query(stmt);
+			return true;
 		} catch (SQLException e) {
 			logger.severe("Unban failed, " + e.getMessage());
+			return false;
 		}	
 	}
 
 	@Override
-	public void gunban(String player) {
+	public boolean gunban(String player) {
 		PreparedStatement stmt;
 		try {
 			stmt = connection.prepare("DELETE FROM bungeeban_playerbans WHERE banned = ? " +
 																	    "AND server = '(GLOBAL)'");
 			stmt.setString(1, player);
 			connection.query(stmt);
+			return true;
 		} catch (SQLException e) {
 			logger.severe("Global Unban failed, " + e.getMessage());
+			return false;
 		}
 	}
 
 	@Override
-	public void unbanIP(String ip, String server) {
+	public boolean unbanIP(String ip, String server) {
 		PreparedStatement stmt;
 		try {
 			stmt = connection.prepare("DELETE FROM bungeeban_ipbans WHERE player = ? AND server = ?");
 			stmt.setString(1, ip);
 			stmt.setString(2, server);
 			connection.query(stmt);
+			return true;
 		} catch (SQLException e) {
 			logger.severe("UnbanIP failed, " + e.getMessage());
+			return false;
 		}
 	}
 
 	@Override
-	public void gunbanIP(String ip) {
+	public boolean gunbanIP(String ip) {
 		PreparedStatement stmt;
 		try {
 			stmt = connection.prepare("DELETE FROM bungeeban_ipbans WHERE player = ? AND server = '(GLOBAL)'");
 			stmt.setString(1, ip);
 			connection.query(stmt);
+			return true;
 		} catch (SQLException e) {
 			logger.severe("Global UnbanIP failed, " + e.getMessage());
+			return false;
 		}
 	}
 
@@ -157,15 +146,15 @@ public class MySQLBanStore implements IBanStore {
 			if (rs.first()) {
 				do {
 					try {
-						BanEntry entry = new BanEntry(rs.getString("banned"))
-							.setCreated(dateFormat.parse(rs.getString("created")))
-							.setServer(rs.getString("server"))
-							.setReason(rs.getString("reason"))
-							.setSource(rs.getString("source"));
+						BanEntry.Builder entry = new BanEntry.Builder(rs.getString("banned"))
+							.created(dateFormat.parse(rs.getString("created")))
+							.server(rs.getString("server"))
+							.reason(rs.getString("reason"))
+							.source(rs.getString("source"));
 						if (rs.getNString("expiry") != null) {
-							entry.setExpiry(dateFormat.parse(rs.getNString("expiry")));
+							entry.expiry(dateFormat.parse(rs.getNString("expiry")));
 						}
-						entries.add(entry);
+						entries.add(entry.build());
 					} catch (ParseException e) {
 						logger.severe("Invalid date format for entry " + rs.getString("banned") +
 							":" + rs.getString("server"));
@@ -188,15 +177,16 @@ public class MySQLBanStore implements IBanStore {
 			if (rs.first()) {
 				do {
 					try {
-						BanEntry entry = new BanEntry(rs.getString("banned"))
-							.setCreated(dateFormat.parse(rs.getString("created")))
-							.setServer(rs.getString("server"))
-							.setReason(rs.getString("reason"))
-							.setSource(rs.getString("source"));
+						BanEntry.Builder entry = new BanEntry.Builder(rs.getString("banned"))
+							.created(dateFormat.parse(rs.getString("created")))
+							.server(rs.getString("server"))
+							.reason(rs.getString("reason"))
+							.source(rs.getString("source"));
 						if (rs.getNString("expiry") != null) {
-							entry.setExpiry(dateFormat.parse(rs.getNString("expiry")));
+							entry.expiry(dateFormat.parse(rs.getNString("expiry")));
 						}
-						entries.add(entry);
+						entry.ipban();
+						entries.add(entry.build());
 					} catch (ParseException e) {
 						logger.severe("Invalid date format for entry " + rs.getString("banned") +
 							":" + rs.getString("server"));
