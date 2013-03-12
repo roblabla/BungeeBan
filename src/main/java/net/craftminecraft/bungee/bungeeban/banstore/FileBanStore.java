@@ -33,9 +33,9 @@ public class FileBanStore implements IBanStore {
 	@Override
 	public boolean ban(BanEntry entry) {
 		if (entry.isIPBan())
-			playerBanned.add(entry);
-		else
 			ipBanned.add(entry);
+		else
+			playerBanned.add(entry);
 		save();
 		return true;
 	}

@@ -5,6 +5,8 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 import net.craftminecraft.bungee.bungeeban.banstore.BanEntry;
@@ -16,6 +18,12 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 
 public class BanManager {
+	private static Pattern pattern = Pattern.compile(
+			"^([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." +
+	        "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." +
+	        "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." +
+	        "([01]?\\d\\d?|2[0-4]\\d|25[0-5])$");
+
 	private static IBanStore banstore;
 	
 	// Static class.
@@ -167,11 +175,7 @@ public class BanManager {
 	}
 	
 	public static boolean isIP(String playerorip) {
-		try {
-			InetAddress.getByName(playerorip);
-			return true;
-		} catch (UnknownHostException e) {
-			return false;
-		}
+	      Matcher matcher = pattern.matcher(playerorip);
+	      return matcher.matches();
 	}
 }

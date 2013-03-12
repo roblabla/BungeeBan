@@ -61,6 +61,10 @@ public class BanCommand extends Command {
 			sender.sendMessage(ChatColor.RED + "You don't have permission to do this.");
 			return;
 		}
-		BanManager.ban(entry);
+		if (BanManager.ban(entry)) {
+			sender.sendMessage(ChatColor.RED + entry.getBanned() + " has been banned.");
+		} else {
+			sender.sendMessage(ChatColor.RED + "An error has occured. Check the proxy.log or notify an admin.");
+		}
 	}
 }
