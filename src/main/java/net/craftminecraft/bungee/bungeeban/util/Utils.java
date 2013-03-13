@@ -77,13 +77,16 @@ public class Utils {
 			untilbuilder.append((days != 0) ? "days : 
 		}
 		*/
-		return format.replaceAll("%banned%", entry.getBanned())
-					 .replaceAll("%source%", entry.getSource())
-					 .replaceAll("%created%", dateFormat.format(entry.getCreated()))
-					 .replaceAll("%server%", entry.getServer())
-					 .replaceAll("%reason%", entry.getReason())
-					 .replaceAll("%date%", dateFormat.format(entry.getExpiry()));
+		format = format.replaceAll("%banned%", entry.getBanned())
+					   .replaceAll("%source%", entry.getSource())
+					   .replaceAll("%created%", dateFormat.format(entry.getCreated()))
+					   .replaceAll("%server%", entry.getServer())
+					   .replaceAll("%reason%", entry.getReason());
+		if (entry.isTempBan()) {
+			format = format.replaceAll("%date%", dateFormat.format(entry.getExpiry()));
 		//			 .replaceAll("%time%", replacement);
+		}
+		return format;
 	}
 	
 	

@@ -20,6 +20,7 @@ public class BanCommand extends Command {
 	public void execute(CommandSender sender, String[] args) {
 		ProxiedPlayer player = null;
 		BanEntry.Builder newban;
+
 		// Check if console or player
 		if (sender instanceof ProxiedPlayer) {
 			if (args.length < 1) {
@@ -52,8 +53,9 @@ public class BanCommand extends Command {
 			return;
 		}
 		
-		if (reason != null || !reason.isEmpty())
+		if (reason != null && !reason.isEmpty()) {
 			newban.reason(reason);
+		}
 		
 		// Build entry & check for permission
 		BanEntry entry = newban.build();

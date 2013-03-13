@@ -126,7 +126,7 @@ public class BanEntry {
     		if (banned == null || banned.isEmpty()) {
     			throw new IllegalArgumentException("Banned cannot be empty or null");
     		}
-    		if (server != "(GLOBAL)" && ProxyServer.getInstance().getServerInfo(server) == null) {
+    		if (server == null || (!server.equalsIgnoreCase("(GLOBAL)") && ProxyServer.getInstance().getServerInfo(server) == null)) {
     			throw new IllegalArgumentException("Server " + server + " does not exist!");
     		}
     		if (created == null) {

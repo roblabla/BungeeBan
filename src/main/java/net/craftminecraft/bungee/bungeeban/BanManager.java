@@ -152,22 +152,13 @@ public class BanManager {
 	}
 	
 	public static void kick(String playerorip, String reason) {
-		try {
-			InetAddress address = InetAddress.getByName(playerorip);
-			for(ProxiedPlayer player : ProxyServer.getInstance().getPlayers()) {
-				if (player.getAddress().getAddress().equals(address)) {
-					player.disconnect(reason);
-				}
+		for(ProxiedPlayer player : ProxyServer.getInstance().getPlayers()) {
+			if (player.getAddress().getAddress().getHostAddress().equalsIgnoreCase(playerorip)
+				|| player.getName().equalsIgnoreCase(playerorip)) {
+				player.disconnect(reason);
+				return;
 			}
-		} catch (UnknownHostException e) {
-			Collection<ProxiedPlayer> players = ProxyServer.getInstance().getPlayers();
-			for (ProxiedPlayer player : players) {
-				if (player.getName().equalsIgnoreCase(playerorip)) {
-					player.disconnect(reason);
-					return;
-				}
-			}
-		}
+		} 
 	}
 	
 	public static void reload() {
