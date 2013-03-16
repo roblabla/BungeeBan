@@ -6,11 +6,12 @@ import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 import net.craftminecraft.bungee.bungeeban.banstore.BanEntry;
+import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 public class Utils {
-    public static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z");
+    public static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
 	
     public static boolean hasPermission(CommandSender player, String command, String stringargs) {
 		if (player.hasPermission("bans.superadmin")) {
@@ -77,13 +78,16 @@ public class Utils {
 			untilbuilder.append((days != 0) ? "days : 
 		}
 		*/
-		return format.replaceAll("%banned%", entry.getBanned())
-					 .replaceAll("%source%", entry.getSource())
-					 .replaceAll("%created%", dateFormat.format(entry.getCreated()))
-					 .replaceAll("%server%", entry.getServer())
-					 .replaceAll("%reason%", entry.getReason())
-					 .replaceAll("%date%", dateFormat.format(entry.getExpiry()));
+		format = format.replaceAll("%banned%", entry.getBanned())
+					   .replaceAll("%source%", entry.getSource())
+					   .replaceAll("%created%", dateFormat.format(entry.getCreated()))
+					   .replaceAll("%server%", entry.getServer())
+					   .replaceAll("%reason%", entry.getReason());
+		if (entry.isTempBan()) {
+			format = format.replaceAll("%until%", dateFormat.format(entry.getExpiry()));
 		//			 .replaceAll("%time%", replacement);
+		}
+		return ChatColor.translateAlternateColorCodes('&', format);
 	}
 	
 	
@@ -114,11 +118,11 @@ public class Utils {
 		}
 
 		Calendar cal = Calendar.getInstance();
-		cal.add(Calendar.WEEK_OF_YEAR, -1 * weeks);
-		cal.add(Calendar.DAY_OF_MONTH, -1 * days);
-		cal.add(Calendar.HOUR, -1 * hours);
-		cal.add(Calendar.MINUTE, -1 * mins);
-		cal.add(Calendar.SECOND, -1 * secs);
+		cal.add(Calendar.WEEK_OF_YEAR, weeks);
+		cal.add(Calendar.DAY_OF_MONTH, days);
+		cal.add(Calendar.HOUR, hours);
+		cal.add(Calendar.MINUTE, mins);
+		cal.add(Calendar.SECOND, secs);
 		return cal.getTime();
 	}
 	

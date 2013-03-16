@@ -36,7 +36,7 @@ public class MainConfig extends Config {
 		switch (type) {
 		case "ban": return message_ban;
 		case "banip": return message_banip;
-		case "temban": return message_tempban;
+		case "tempban": return message_tempban;
 		case "tempbanip": return message_tempbanip;
 		case "gban": return message_gban;
 		case "gbanip": return message_gbanip;
@@ -59,8 +59,8 @@ public class MainConfig extends Config {
 	
 	public String defaults_banreason = "Banned by an operator.";
 	public String defaults_gbanreason = "Banned by an operator.";
-	public String defaults_tempbanreason = "Banned by an operator for %time%.";
-	public String defaults_gtempbanreason = "Banned by an operator for %time%.";
+	public String defaults_tempbanreason = "Banned by an operator for %until%.";
+	public String defaults_gtempbanreason = "Banned by an operator for %until%.";
 	public String defaults_tempbantime = "1d";
 
 	public boolean message_sendLocalMsgGlobally = false;
@@ -68,12 +68,12 @@ public class MainConfig extends Config {
 	public String message_banip = "%source% banned %banned% from %server% for %reason%";
 	public String message_gban = "%source% global banned %banned% for %reason%";
 	public String message_gbanip = "%source% global banned %banned% for %reason%";
-	public String message_tempban = "%source% tempbanned %banned% from %server% for %time% for %reason%";
-	public String message_tempbanip = "%source% tempbanned %banned% from %server% for %time% for %reason%";
-	public String message_gtempban = "%source% global tempbanned %banned% for %time% for %reason%";
-	public String message_gtempbanip = "%source% global tempbanned %banned% for %time% for %reason%";
+	public String message_tempban = "%source% tempbanned %banned% from %server% until %until% for %reason%";
+	public String message_tempbanip = "%source% tempbanned %banned% from %server% until %until% for %reason%";
+	public String message_gtempban = "%source% global tempbanned %banned% until %until% for %reason%";
+	public String message_gtempbanip = "%source% global tempbanned %banned% until %until% for %reason%";
 	public String message_unban = "%banned% got unbanned from %server%!";
-	public String message_unbanip = "%banned% got banned from %server%!";
+	public String message_unbanip = "%banned% got unbanned from %server%!";
 	public String message_gunban = "%banned% got unbanned globally!";
 	public String message_gunbanip = "%banned% got unbanned globally!";
 }

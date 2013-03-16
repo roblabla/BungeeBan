@@ -124,9 +124,9 @@ public class BanEntry {
     	
     	public BanEntry build() {
     		if (banned == null || banned.isEmpty()) {
-    			throw new IllegalArgumentException("Banned cannot be empty or null");
+    			throw new IllegalArgumentException("Username cannot be null or empty");
     		}
-    		if (server != "(GLOBAL)" && ProxyServer.getInstance().getServerInfo(server) == null) {
+    		if (server == null || (!server.equalsIgnoreCase("(GLOBAL)") && ProxyServer.getInstance().getServerInfo(server) == null)) {
     			throw new IllegalArgumentException("Server " + server + " does not exist!");
     		}
     		if (created == null) {
@@ -137,8 +137,8 @@ public class BanEntry {
     		}
     		if (reason == null) {
     			String type = "ban";
-    			type = type + ((expiry != null) ? "temp" : "");
-    			type = type + ((server.equalsIgnoreCase("(GLOBAL)")) ? "g" : "");
+    			type = ((expiry != null) ? "temp" : "") + type;
+    			type = ((server.equalsIgnoreCase("(GLOBAL)")) ? "g" : "") + type;
     			reason = MainConfig.getInstance().getReasonByType(type);
     		}
     		
@@ -146,7 +146,7 @@ public class BanEntry {
     			if (ProxyServer.getInstance().getPlayer(banned) != null) {
     				banned = ProxyServer.getInstance().getPlayer(banned).getAddress().getAddress().getHostAddress();
     			} else if (!BanManager.isIP(banned)) {
-    				throw new IllegalArgumentException("Banned is not a legal ip, and no user with this name is online");
+    				throw new IllegalArgumentException("Not a legal ip, and no user with this name is online");
     			}
     		}
 

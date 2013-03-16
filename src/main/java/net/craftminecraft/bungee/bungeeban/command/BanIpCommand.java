@@ -39,27 +39,38 @@ public class BanIpCommand extends Command {
 		newban = new BanEntry.Builder(args[0])
 					.source(sender.getName());
 
-		if (args.length > 1) {
-			String reason;
-			if (ProxyServer.getInstance().getServerInfo(args[1]) != null) {
-				newban.server(args[1]);
-				reason = Utils.buildReason(args, 2);
-			} else if (player != null) {
-				newban.server(player.getServer().getInfo().getName());
-				reason = Utils.buildReason(args, 1);
-			} else {
-				sender.sendMessage(ChatColor.RED + args[1] + " is not a valid server.");
-				return;
-			} if (!reason.isEmpty()) {
-				newban.reason(reason);
-			}
+		String reason = null;
+		if (args.length > 1 && ProxyServer.getInstance().getServerInfo(args[1]) != null) {
+			newban.server(args[1]);
+			reason = Utils.buildReason(args, 2);
+		} else if (player != null) {
+			newban.server(player.getServer().getInfo().getName());
+			reason = Utils.buildReason(args, 1);
+		} else {
+			sender.sendMessage(ChatColor.RED + args[1] + " is not a valid server.");
+			return;
 		}
+		
+		if (reason != null && !reason.isEmpty()) {
+			newban.reason(reason);
+		}
+
 		newban.ipban();
-		BanEntry entry = newban.build();
+		BanEntry entry;
+		try {
+			entry = newban.build();
+		} catch (IllegalArgumentException ex) {
+			sender.sendMessage(ChatColor.RED + ex.getMessage());
+			return;
+		}
 		if (!Utils.hasPermission(sender, "banip", entry.getServer())) {
 			sender.sendMessage(ChatColor.RED + "You don't have permission to do this.");
 			return;
 		}
-		BanManager.ban(entry);
+		if (BanManager.ban(entry)) {
+			sender.sendMessage(ChatColor.RED + entry.getBanned() + " has been banned.");
+		} else {
+			sender.sendMessage(ChatColor.RED + "An error has occured. Check the proxy.log or notify an admin.");
+		}
 	}
 }

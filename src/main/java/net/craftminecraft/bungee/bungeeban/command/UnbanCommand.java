@@ -19,29 +19,35 @@ public class UnbanCommand extends Command {
 		if (sender instanceof ProxiedPlayer) {
 			if (args.length < 1 || args.length > 2) {
 				sender.sendMessage(ChatColor.RED + "Wrong command format. <required> [optional]");
-				sender.sendMessage(ChatColor.RED + "/unban [server] <username>");
+				sender.sendMessage(ChatColor.RED + "/unban <username> [server]");
 				return;
 			}
 			player = (ProxiedPlayer) sender;
 		} else {
 			if (args.length != 2) {
 				sender.sendMessage(ChatColor.RED + "Wrong command format. <required> [optional]");
-				sender.sendMessage(ChatColor.RED + "/unban <server> <username>");
+				sender.sendMessage(ChatColor.RED + "/unban <username> <server>");
 				return;
 			}
 		}
-		
+		String server;
 		if (args.length == 2) {
-			if (!Utils.hasPermission(sender, "unban", args[1])) {
-				sender.sendMessage(ChatColor.RED + "You don't have permission to do this.");
-			}
-			BanManager.unban(args[0], args[1]);
-
+			server = args[1];
 		} else if (player != null) {
-			if (Utils.hasPermission(sender, "unban", player.getServer().getInfo().getName())) {
-				sender.sendMessage(ChatColor.RED + "You don't have permission to do this.");
-			}
-			BanManager.unban(args[0], player.getServer().getInfo().getName());
+			server = player.getServer().getInfo().getName();
+		} else {
+			return;
+		}
+		
+		if (!Utils.hasPermission(sender, "unban", server)) {
+			sender.sendMessage(ChatColor.RED + "You don't have permission to do this.");
+			return;
+		}
+
+		if (BanManager.unban(args[0], server)) {
+			sender.sendMessage(ChatColor.RED + args[0] + " has been unbanned.");
+		} else {
+			sender.sendMessage(ChatColor.RED + args[0] + " was not banned.");
 		}
 	}
 }

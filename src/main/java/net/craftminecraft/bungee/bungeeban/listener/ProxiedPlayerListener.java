@@ -6,6 +6,7 @@ import com.google.common.eventbus.Subscribe;
 
 import net.craftminecraft.bungee.bungeeban.BanManager;
 import net.craftminecraft.bungee.bungeeban.banstore.BanEntry;
+import net.craftminecraft.bungee.bungeeban.util.Utils;
 import net.md_5.bungee.api.event.LoginEvent;
 import net.md_5.bungee.api.event.ServerConnectEvent;
 import net.md_5.bungee.api.event.ServerConnectedEvent;
@@ -21,7 +22,7 @@ public class ProxiedPlayerListener implements Listener {
 		for(BanEntry entry : ban) {
 			if (entry.isGlobal()) {
 				e.setCancelled(true);
-				e.setCancelReason(entry.getReason());
+				e.setCancelReason(Utils.formatMessage(entry.getReason(), entry));
 				return;
 			}
 		}
@@ -30,7 +31,7 @@ public class ProxiedPlayerListener implements Listener {
 		for(BanEntry entry : ban) {
 			if (entry.isGlobal()) {
 				e.setCancelled(true);
-				e.setCancelReason(entry.getReason());
+				e.setCancelReason(Utils.formatMessage(entry.getReason(), entry));
 				return;
 			}
 		}
@@ -41,12 +42,12 @@ public class ProxiedPlayerListener implements Listener {
 	public void onServerConnect(ServerConnectEvent e) {
 		BanEntry ban = BanManager.getBan(e.getPlayer().getName(), e.getTarget().getName());
 		if (ban != null) {
-			e.getPlayer().disconnect(ban.getReason());
+			e.getPlayer().disconnect(Utils.formatMessage(ban.getReason(), ban));
 			return;
 		} 
 		ban = BanManager.getBan(e.getPlayer().getAddress().getAddress().getHostAddress(), e.getTarget().getName());
 		if (ban != null) {
-			e.getPlayer().disconnect(ban.getReason());
+			e.getPlayer().disconnect(Utils.formatMessage(ban.getReason(), ban));
 		}
 		return;
 	}

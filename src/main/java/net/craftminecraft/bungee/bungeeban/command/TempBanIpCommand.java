@@ -19,33 +19,34 @@ public class TempBanIpCommand extends Command {
 	@Override
 	public void execute(CommandSender sender, String[] args) {
 		ProxiedPlayer player = null;
-
-		if (player instanceof ProxiedPlayer) {
-			sender = (ProxiedPlayer) player;
+		BanEntry.Builder newban;
+		
+		if (sender instanceof ProxiedPlayer) {
+			player = (ProxiedPlayer) sender;
 			if (args.length < 1) {
 				sender.sendMessage(ChatColor.RED + "Wrong command format. <required> [optional]");
-				sender.sendMessage(ChatColor.RED + "/tempbanip <username/ip> [time] [server] [reason]");
+				sender.sendMessage(ChatColor.RED + "/tempban <username> [time] [server] [reason]");
 				return;
 			}
 		} else {
 			sender.sendMessage(ChatColor.RED + "Console can't local-ban yet. Get your ass in-game.");
 			if (args.length < 2) {
 				sender.sendMessage(ChatColor.RED + "Wrong command format. <required> [optional]");
-				sender.sendMessage(ChatColor.RED + "/tempbanip <username/ip> [time] <server> [reason]");
+				sender.sendMessage(ChatColor.RED + "/tempban <username> [time] <server> [reason]");
 				return;
 			}
 		}
-		BanEntry.Builder newban;
+
 		newban = new BanEntry.Builder(args[0])
 					.source(sender.getName())
 					.expiry();
-			
+		
 		if (args.length > 1) {
 			String reason;
 			try {
 				// If first argument is time.
 				newban.expiry(Utils.parseDate(args[1]));
-				if (ProxyServer.getInstance().getServerInfo(args[2]) != null) {
+				if (args.length > 2 && ProxyServer.getInstance().getServerInfo(args[2]) != null) {
 					newban.server(args[2]);
 					reason = Utils.buildReason(args, 3);
 				} else if (player != null) {
@@ -56,6 +57,7 @@ public class TempBanIpCommand extends Command {
 					sender.sendMessage(ChatColor.RED + args[1] + " is not a valid server.");
 					return;
 				}
+
 			} catch (IllegalArgumentException ex) {
 				// If first argument ISN'T a time.
 				if (ProxyServer.getInstance().getServerInfo(args[1]) != null) {
@@ -73,15 +75,26 @@ public class TempBanIpCommand extends Command {
 			if (!reason.isEmpty()) {
 				newban.reason(reason);
 			}
+		} else {
+			newban.server(player.getServer().getInfo().getName());
 		}
-		
 		newban.ipban();
 		
-		BanEntry entry = newban.build();
-		if (!Utils.hasPermission(sender, "tempbanip", entry.getServer())) {
-			sender.sendMessage(ChatColor.RED + "You don't have permission to do this.");
+		BanEntry entry;
+		try {
+			entry = newban.build();
+		} catch (IllegalArgumentException ex) {
+			sender.sendMessage(ChatColor.RED + ex.getMessage());
 			return;
 		}
-		BanManager.ban(entry);
+		if (!Utils.hasPermission(sender, "tempban", entry.getServer())) {
+			sender.sendMessage(ChatColor.RED + "You don't have permission to do this.");
+		}
+		
+		if (BanManager.ban(entry)) {
+			sender.sendMessage(ChatColor.RED + args[0] + " has been banned.");
+		} else {
+			sender.sendMessage(ChatColor.RED + "An error has occured. Check the proxy.log or notify an admin.");
+		}
 	}
 }

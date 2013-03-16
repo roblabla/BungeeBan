@@ -52,7 +52,7 @@ public class TempBanCommand extends Command {
 			try {
 				// If first argument is time.
 				newban.expiry(Utils.parseDate(args[1]));
-				if (ProxyServer.getInstance().getServerInfo(args[2]) != null) {
+				if (args.length > 2 && ProxyServer.getInstance().getServerInfo(args[2]) != null) {
 					newban.server(args[2]);
 					reason = Utils.buildReason(args, 3);
 				} else if (player != null) {
@@ -81,13 +81,25 @@ public class TempBanCommand extends Command {
 			if (!reason.isEmpty()) {
 				newban.reason(reason);
 			}
+		} else {
+			newban.server(player.getServer().getInfo().getName());
 		}
 		
-		BanEntry entry = newban.build();
+		BanEntry entry;
+		try {
+			entry = newban.build();
+		} catch (IllegalArgumentException ex) {
+			sender.sendMessage(ChatColor.RED + ex.getMessage());
+			return;
+		}
 		if (!Utils.hasPermission(sender, "tempban", entry.getServer())) {
 			sender.sendMessage(ChatColor.RED + "You don't have permission to do this.");
 		}
 		
-		BanManager.ban(entry);
+		if (BanManager.ban(entry)) {
+			sender.sendMessage(ChatColor.RED + args[0] + " has been banned.");
+		} else {
+			sender.sendMessage(ChatColor.RED + "An error has occured. Check the proxy.log or notify an admin.");
+		}
 	}
 }

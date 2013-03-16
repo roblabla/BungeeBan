@@ -33,9 +33,9 @@ public class FileBanStore implements IBanStore {
 	@Override
 	public boolean ban(BanEntry entry) {
 		if (entry.isIPBan())
-			playerBanned.add(entry);
-		else
 			ipBanned.add(entry);
+		else
+			playerBanned.add(entry);
 		save();
 		return true;
 	}
@@ -65,8 +65,8 @@ public class FileBanStore implements IBanStore {
 	@Override
 	public boolean unbanIP(String address, String server) {
 		BanEntry entry = new BanEntry.Builder(address).server(server).ipban().build();
-		if (playerBanned.contains(entry)) {
-			playerBanned.remove(entry);
+		if (ipBanned.contains(entry)) {
+			ipBanned.remove(entry);
 			save();
 			return true;
 		}
@@ -76,8 +76,8 @@ public class FileBanStore implements IBanStore {
 	@Override
 	public boolean gunbanIP(String address) {
 		BanEntry entry = new BanEntry.Builder(address).global().ipban().build();
-		if (playerBanned.contains(entry)) {
-			playerBanned.remove(entry);
+		if (ipBanned.contains(entry)) {
+			ipBanned.remove(entry);
 			save();
 			return true;
 		}

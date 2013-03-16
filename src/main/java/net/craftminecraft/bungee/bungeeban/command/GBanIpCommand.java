@@ -31,11 +31,21 @@ public class GBanIpCommand extends Command {
 			newban.reason(Utils.buildReason(args, 1));
 		}
 		newban.ipban();
-		BanEntry entry = newban.build();
+		BanEntry entry;
+		try {
+			entry = newban.build();
+		} catch (IllegalArgumentException ex) {
+			sender.sendMessage(ChatColor.RED + ex.getMessage());
+			return;
+		}
 		if (!Utils.hasPermission(sender, "gbanip", "")) {
 			sender.sendMessage(ChatColor.RED + "You don't have permission to do this.");
 			return;
 		}
-		BanManager.ban(entry);
+		if (BanManager.ban(entry)) {
+			sender.sendMessage(ChatColor.RED + entry.getBanned() + " has been banned.");
+		} else {
+			sender.sendMessage(ChatColor.RED + "An error has occured. Check the proxy.log or notify an admin.");
+		}
 	}
 }
