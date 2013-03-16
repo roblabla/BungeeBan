@@ -58,7 +58,13 @@ public class BanCommand extends Command {
 		}
 		
 		// Build entry & check for permission
-		BanEntry entry = newban.build();
+		BanEntry entry;
+		try {
+			entry = newban.build();
+		} catch (IllegalArgumentException ex) {
+			sender.sendMessage(ChatColor.RED + ex.getMessage());
+			return;
+		}
 		if (!Utils.hasPermission(sender, "ban", entry.getServer())) {
 			sender.sendMessage(ChatColor.RED + "You don't have permission to do this.");
 			return;

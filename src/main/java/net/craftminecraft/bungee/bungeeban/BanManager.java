@@ -1,28 +1,22 @@
 package net.craftminecraft.bungee.bungeeban;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 
 import net.craftminecraft.bungee.bungeeban.banstore.BanEntry;
 import net.craftminecraft.bungee.bungeeban.banstore.IBanStore;
 import net.craftminecraft.bungee.bungeeban.util.MainConfig;
 import net.craftminecraft.bungee.bungeeban.util.Utils;
 import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 
 public class BanManager {
 	private static Pattern pattern = Pattern.compile(
-			"^([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." +
-	        "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." +
-	        "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." +
-	        "([01]?\\d\\d?|2[0-4]\\d|25[0-5])$");
+			"^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$");
 
 	private static IBanStore banstore;
 	
@@ -34,11 +28,16 @@ public class BanManager {
 	}
 	
 	public static boolean ban(BanEntry entry) {
-		kick(entry.getBanned(), entry.getReason());
+		if (entry.isGlobal()) {
+			gkick(entry.getBanned(), Utils.formatMessage(entry.getReason(), entry));
+		} else {
+			kick(entry.getBanned(), entry.getServer(), Utils.formatMessage(entry.getReason(), entry));
+		}
+		
 		String type = "ban";
 		type += (entry.isIPBan()) ? "ip" : "";
-		type = type + ((entry.isTempBan()) ? "temp" : "");
-		type = type + ((entry.isGlobal()) ? "g" : "");
+		type = ((entry.isTempBan()) ? "temp" : "") + type;
+		type = ((entry.isGlobal()) ? "g" : "") + type;
 		if (banstore.ban(entry)) {
 			for (ProxiedPlayer player : ProxyServer.getInstance().getPlayers()) {
 				if (player.getServer().getInfo().getName().equals(entry.getServer())
@@ -141,24 +140,57 @@ public class BanManager {
 						player.sendMessage(Utils.formatMessage(MainConfig.getInstance().getMessageByType("unban"), entry));
 					}
 				}
-			return true;
+				return true;
 			}
 		}
 		return false;
 	}
 	
-	public static void kick(String playerorip) {
-		kick(playerorip, "You have been kicked");
+	public static void kick(String playerorip, String server) {
+		kick(playerorip, server, "You have been kicked");
 	}
 	
-	public static void kick(String playerorip, String reason) {
+	public static void kick(String playerorip, String server, String reason) {
+		ServerInfo info = ProxyServer.getInstance().getServerInfo(server);
+		if (info != null) {
+			kick(playerorip, info, reason);
+		}
+	}
+	
+	public static void kick(String playerorip, ServerInfo server) {
+		kick(playerorip, server, "You have been kicked");
+	}
+	
+	public static void kick(String playerorip, ServerInfo server, String reason) {
+		ArrayList<ProxiedPlayer> tokick = new ArrayList<ProxiedPlayer>();
+		for (ProxiedPlayer player : server.getPlayers()) {
+			if (player.getName().equalsIgnoreCase(playerorip)
+				|| player.getAddress().getAddress().getHostAddress().equals(playerorip)) {
+				tokick.add(player);
+			}
+		}
+		for (ProxiedPlayer player : tokick) {
+			player.disconnect(reason);
+		}
+		tokick.clear();
+	}
+	
+	public static void gkick(String playerorip) {
+		gkick(playerorip, "You have been kicked");
+	}
+	
+	public static void gkick(String playerorip, String reason) {
+		ArrayList<ProxiedPlayer> tokick = new ArrayList<ProxiedPlayer>();
 		for(ProxiedPlayer player : ProxyServer.getInstance().getPlayers()) {
 			if (player.getAddress().getAddress().getHostAddress().equalsIgnoreCase(playerorip)
 				|| player.getName().equalsIgnoreCase(playerorip)) {
-				player.disconnect(reason);
-				return;
+				tokick.add(player);
 			}
-		} 
+		}
+		for (ProxiedPlayer player : tokick) {
+			player.disconnect(reason);
+		}
+		tokick.clear();
 	}
 	
 	public static void reload() {
