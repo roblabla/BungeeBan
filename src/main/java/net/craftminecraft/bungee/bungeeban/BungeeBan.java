@@ -19,6 +19,7 @@ public class BungeeBan extends Plugin {
 	private File configdir;
 	private Logger logger = null;
 	
+	@Override
 	public void onEnable() {
 		configdir = new File("plugins" + File.separator + this.getDescription().getName());
 		this.logger = new PluginLogger(this);
@@ -53,6 +54,7 @@ public class BungeeBan extends Plugin {
 		getLogger().log(Level.INFO,"Now loaded.");
 	}
 	
+	@Override
 	public void onDisable() {
 
 	}

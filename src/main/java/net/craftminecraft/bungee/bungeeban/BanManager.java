@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.google.common.collect.ImmutableList;
+
 import net.craftminecraft.bungee.bungeeban.banstore.BanEntry;
 import net.craftminecraft.bungee.bungeeban.banstore.IBanStore;
 import net.craftminecraft.bungee.bungeeban.util.MainConfig;
@@ -55,39 +57,18 @@ public class BanManager {
 	
 	public static BanEntry getBan(String playerorip, String server) {
 		if (isIP(playerorip)) {
-			for (BanEntry entry : banstore.getIPBanList()) {
-				if (entry.getBanned().equalsIgnoreCase(playerorip) 
-					&& entry.getServer().equalsIgnoreCase(server)) {
-					return entry;
-				}
-			}
+			return banstore.getIPBanList().get(playerorip, server);
 		} else {
-			for (BanEntry entry : banstore.getBanList()) {
-				if (entry.getBanned().equalsIgnoreCase(playerorip) 
-					&& entry.getServer().equalsIgnoreCase(server)) {
-					return entry;
-				}
-			}
+			return banstore.getBanList().get(playerorip, server);
 		}
-		return null;
 	}
 	
 	public static List<BanEntry> getBanList(String playerorip) {
-		List<BanEntry> entries = new ArrayList<BanEntry>();
 		if (isIP(playerorip)) {
-			for (BanEntry entry : banstore.getIPBanList()) {
-				if (entry.getBanned().equalsIgnoreCase(playerorip)) {
-					entries.add(entry);
-				}
-			}
+			return ImmutableList.copyOf(banstore.getIPBanList().row(playerorip).values());
 		} else {
-			for (BanEntry entry : banstore.getBanList()) {
-				if (entry.getBanned().equalsIgnoreCase(playerorip)) {
-					entries.add(entry);
-				}
-			}
+			return ImmutableList.copyOf(banstore.getBanList().row(playerorip).values());
 		}
-		return entries;
 	}
 	
 	public static boolean gunban(String playerorip) {
