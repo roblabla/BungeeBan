@@ -154,7 +154,8 @@ public class BanEntry {
     	}
     }
  
-    public boolean equals(Object obj) {
+    @Override
+	public boolean equals(Object obj) {
     	boolean result = false;
     	if (obj instanceof BanEntry) {
     		BanEntry otherBan = (BanEntry) obj;
@@ -213,6 +214,7 @@ public class BanEntry {
 		return this.ipban;
 	}
 	
+	@Override
 	public Builder clone() {
 		return new Builder(banned)
 					.server(server)

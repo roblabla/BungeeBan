@@ -1,12 +1,7 @@
 package net.craftminecraft.bungee.bungeeban.command;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-
-
 import net.craftminecraft.bungee.bungeeban.BanManager;
 import net.craftminecraft.bungee.bungeeban.banstore.BanEntry;
-import net.craftminecraft.bungee.bungeeban.util.MainConfig;
 import net.craftminecraft.bungee.bungeeban.util.Utils;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;

@@ -6,10 +6,11 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.Table;
 
 import net.craftminecraft.bungee.bungeeban.util.MainConfig;
 
@@ -139,22 +140,23 @@ public class MySQLBanStore implements IBanStore {
 	}
 
 	@Override
-	public List<BanEntry> getBanList() {
+	public Table<String,String,BanEntry> getBanList() {
 		try {
 			ResultSet rs = connection.query("SELECT * FROM bungeeban_playerbans");
-			List<BanEntry> entries = new ArrayList<BanEntry>();
+			Table<String,String,BanEntry> entries = HashBasedTable.create();
 			if (rs.first()) {
 				do {
 					try {
-						BanEntry.Builder entry = new BanEntry.Builder(rs.getString("banned"))
+						BanEntry.Builder builder = new BanEntry.Builder(rs.getString("banned"))
 							.created(dateFormat.parse(rs.getString("created")))
 							.server(rs.getString("server"))
 							.reason(rs.getString("reason"))
 							.source(rs.getString("source"));
 						if (rs.getNString("expiry") != null) {
-							entry.expiry(dateFormat.parse(rs.getNString("expiry")));
+							builder.expiry(dateFormat.parse(rs.getNString("expiry")));
 						}
-						entries.add(entry.build());
+						BanEntry entry = builder.build();
+						entries.put(entry.getBanned(),entry.getServer(),entry);
 					} catch (ParseException e) {
 						logger.severe("Invalid date format for entry " + rs.getString("banned") +
 							":" + rs.getString("server"));
@@ -170,23 +172,23 @@ public class MySQLBanStore implements IBanStore {
 	}
 
 	@Override
-	public List<BanEntry> getIPBanList() {
+	public Table<String,String,BanEntry> getIPBanList() {
 		try {
 			ResultSet rs = connection.query("SELECT * FROM bungeeban_ipbans");
-			List<BanEntry> entries = new ArrayList<BanEntry>();
+			Table<String,String,BanEntry> entries = HashBasedTable.create();
 			if (rs.first()) {
 				do {
 					try {
-						BanEntry.Builder entry = new BanEntry.Builder(rs.getString("banned"))
+						BanEntry.Builder builder = new BanEntry.Builder(rs.getString("banned"))
 							.created(dateFormat.parse(rs.getString("created")))
 							.server(rs.getString("server"))
 							.reason(rs.getString("reason"))
 							.source(rs.getString("source"));
 						if (rs.getNString("expiry") != null) {
-							entry.expiry(dateFormat.parse(rs.getNString("expiry")));
+							builder.expiry(dateFormat.parse(rs.getNString("expiry")));
 						}
-						entry.ipban();
-						entries.add(entry.build());
+						BanEntry entry = builder.ipban().build();
+						entries.put(entry.getBanned(),entry.getServer(),entry);
 					} catch (ParseException e) {
 						logger.severe("Invalid date format for entry " + rs.getString("banned") +
 							":" + rs.getString("server"));

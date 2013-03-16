@@ -6,45 +6,44 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
+import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.Table;
 
-import net.craftminecraft.bungee.bungeeban.BungeeBan;
+
 import net.md_5.bungee.api.ProxyServer;
 
 
 public class FileBanStore implements IBanStore {
-	private List<BanEntry> playerBanned;
-	private List<BanEntry> ipBanned;
+	private Table<String, String, BanEntry> playerBanned;
+	private Table<String, String, BanEntry> ipBanned;
 	private File fileplayer = new File("plugins" + File.separator + "BungeeBan", "banned-players.txt");
 	private File fileip = new File("plugins" + File.separator + "BungeeBan", "banned-ips.txt");
     public static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z");
 	
 	public FileBanStore() {
-		playerBanned = new ArrayList<BanEntry>();
-		ipBanned = new ArrayList<BanEntry>();
+		playerBanned = HashBasedTable.create();
+		ipBanned = HashBasedTable.create();
 		reloadBanList();
 	}
 	
 	@Override
 	public boolean ban(BanEntry entry) {
 		if (entry.isIPBan())
-			ipBanned.add(entry);
+			ipBanned.put(entry.getBanned(), entry.getServer(), entry);
 		else
-			playerBanned.add(entry);
+			playerBanned.put(entry.getBanned(), entry.getServer(), entry);
 		save();
 		return true;
 	}
 
 	@Override
 	public boolean unban(String player, String server) {
-		BanEntry entry = new BanEntry.Builder(player).server(server).build();
-		if (playerBanned.contains(entry)) {
-			playerBanned.remove(entry);
+		if (playerBanned.contains(player, server)) {
+			playerBanned.remove(player, server);
 			save();
 			return true;
 		}
@@ -53,20 +52,13 @@ public class FileBanStore implements IBanStore {
 	
 	@Override
 	public boolean gunban(String player) {
-		BanEntry entry = new BanEntry.Builder(player).global().build();
-		if (playerBanned.contains(entry)) {
-			playerBanned.remove(entry);
-			save();
-			return true;
-		}
-		return false;
+		return unban(player, "(GLOBAL)");
 	}
 
 	@Override
 	public boolean unbanIP(String address, String server) {
-		BanEntry entry = new BanEntry.Builder(address).server(server).ipban().build();
-		if (ipBanned.contains(entry)) {
-			ipBanned.remove(entry);
+		if (ipBanned.contains(address, server)) {
+			ipBanned.remove(address, server);
 			save();
 			return true;
 		}
@@ -75,23 +67,17 @@ public class FileBanStore implements IBanStore {
 	
 	@Override
 	public boolean gunbanIP(String address) {
-		BanEntry entry = new BanEntry.Builder(address).global().ipban().build();
-		if (ipBanned.contains(entry)) {
-			ipBanned.remove(entry);
-			save();
-			return true;
-		}
-		return false;	
+		return unbanIP(address, "(GLOBAL)");
 	}
 	
 	@Override
-	public List<BanEntry> getBanList() {
+	public Table<String, String, BanEntry> getBanList() {
 		removeExpired();
 		return playerBanned;
 	}
 
 	@Override
-	public List<BanEntry> getIPBanList() {
+	public Table<String, String, BanEntry> getIPBanList() {
 		removeExpired();
 		return ipBanned;
 	}
@@ -101,16 +87,16 @@ public class FileBanStore implements IBanStore {
         	//save player bans
             PrintWriter printwriter = new PrintWriter(new FileWriter(this.fileplayer, false));
 
-            for (BanEntry entry : playerBanned) {
-                printwriter.println(entryToString(entry));
+            for (Table.Cell<String, String, BanEntry> cell : playerBanned.cellSet()) {
+                printwriter.println(entryToString(cell.getValue()));
             }
             printwriter.close();
             
             //save ip bans
             printwriter = new PrintWriter(new FileWriter(this.fileip, false));
 
-            for (BanEntry entry : ipBanned) {
-                printwriter.println(entryToString(entry));
+            for (Table.Cell<String, String, BanEntry> cell : playerBanned.cellSet()) {
+                printwriter.println(entryToString(cell.getValue()));
             }
             printwriter.close();
         } catch (IOException ioexception) {
@@ -119,12 +105,22 @@ public class FileBanStore implements IBanStore {
 	}
 	
 	private void removeExpired() {
-        Iterator<BanEntry> iterator = this.playerBanned.iterator();
+        Iterator<Table.Cell<String,String,BanEntry>> iterator = this.playerBanned.cellSet().iterator();
 
         while (iterator.hasNext()) {
-            BanEntry banentry = iterator.next();
+            Table.Cell<String, String, BanEntry> cell = iterator.next();
 
-            if (banentry.hasExpired()) {
+            if (cell.getValue().hasExpired()) {
+                iterator.remove();
+            }
+        }
+        
+        iterator = this.ipBanned.cellSet().iterator();
+
+        while (iterator.hasNext()) {
+            Table.Cell<String, String, BanEntry> cell = iterator.next();
+
+            if (cell.getValue().hasExpired()) {
                 iterator.remove();
             }
         }
@@ -202,14 +198,16 @@ public class FileBanStore implements IBanStore {
 			Scanner s = new Scanner(fileplayer);
 			while (s.hasNext()) {
 				String strentry = s.nextLine();
-				playerBanned.add(entryFromFile(strentry));
+				BanEntry entry = entryFromFile(strentry);
+				playerBanned.put(entry.getBanned(), entry.getServer(), entry);
 			}
 			s.close();
 			
 			s = new Scanner(fileip);
 			while (s.hasNext()) {
 				String strentry = s.nextLine();
-				ipBanned.add(entryFromFile(strentry));
+				BanEntry entry = entryFromFile(strentry);
+				ipBanned.put(entry.getBanned(), entry.getServer(), entry);
 			}
 			s.close();
 			

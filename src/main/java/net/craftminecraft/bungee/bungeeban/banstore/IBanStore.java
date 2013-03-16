@@ -1,6 +1,6 @@
 package net.craftminecraft.bungee.bungeeban.banstore;
 
-import java.util.List;
+import com.google.common.collect.Table;
 
 /**
  * @author roblabla
@@ -40,8 +40,8 @@ public interface IBanStore {
 	 */
 	boolean gunbanIP(String ip);
 
-	List<BanEntry> getBanList();
-	List<BanEntry> getIPBanList();
+	Table<String,String,BanEntry> getBanList();
+	Table<String,String,BanEntry> getIPBanList();
 	
 	/**
 	 * Reloads the list of bans from whatever storage into memory.
