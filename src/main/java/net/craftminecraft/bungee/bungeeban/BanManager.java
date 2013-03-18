@@ -6,6 +6,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 
 import net.craftminecraft.bungee.bungeeban.banstore.BanEntry;
 import net.craftminecraft.bungee.bungeeban.banstore.IBanStore;
@@ -54,7 +55,7 @@ public class BanManager {
 			return false;
 		}
 	}
-	
+
 	public static BanEntry getBan(String playerorip, String server) {
 		if (isIP(playerorip)) {
 			return banstore.getIPBanList().get(playerorip, server);
@@ -62,15 +63,39 @@ public class BanManager {
 			return banstore.getBanList().get(playerorip, server);
 		}
 	}
-	
-	public static List<BanEntry> getBanList(String playerorip) {
-		if (isIP(playerorip)) {
-			return ImmutableList.copyOf(banstore.getIPBanList().row(playerorip).values());
-		} else {
-			return ImmutableList.copyOf(banstore.getBanList().row(playerorip).values());
-		}
+
+	public static List<BanEntry> getBanList() {
+		return ImmutableList.copyOf(banstore.getBanList().values());
 	}
-	
+
+	@Deprecated
+	public static List<BanEntry> getBanList(String playerorip) {
+		return getPlayerBanList(playerorip);
+	}
+
+	public static List<BanEntry> getPlayerBanList(String player) {
+		return ImmutableList.copyOf(banstore.getBanList().row(player).values());
+	}
+
+	public static List<BanEntry> getIPBanList(String ip) {
+		return ImmutableList.copyOf(banstore.getIPBanList().row(ip).values());
+	}
+
+	public static List<BanEntry> getServerBanList(String server) {
+		ArrayList<BanEntry> entries = new ArrayList<BanEntry>();
+		entries.addAll(banstore.getIPBanList().column(server).values());
+		entries.addAll(banstore.getBanList().column(server).values());
+		return ImmutableList.copyOf(entries);
+	}
+
+	public static List<BanEntry> getServerPlayerBanList(String server) {
+		return ImmutableList.copyOf(banstore.getBanList().column(server).values());
+	}
+
+	public static List<BanEntry> getServerIPBanList(String server) {
+		return ImmutableList.copyOf(banstore.getIPBanList().column(server).values());
+	}
+
 	public static boolean gunban(String playerorip) {
 		BanEntry.Builder builder = new BanEntry.Builder(playerorip).global();
 		BanEntry entry;

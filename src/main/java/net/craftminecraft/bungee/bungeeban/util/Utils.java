@@ -52,6 +52,10 @@ public class Utils {
 			if (player.hasPermission("bans.command.reloadbans"))
 				return true;
 			break;
+		case "lookup":
+			break;
+		case "banlist":
+			
 		case "see":
 			if (player.hasPermission("bans.player")) {
 				return true;
