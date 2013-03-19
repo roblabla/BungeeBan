@@ -11,17 +11,25 @@ import net.craftminecraft.bungee.bungeeban.listener.PluginMessageListener;
 import net.craftminecraft.bungee.bungeeban.listener.ProxiedPlayerListener;
 import net.craftminecraft.bungee.bungeeban.util.MainConfig;
 import net.craftminecraft.bungee.bungeeban.util.PluginLogger;
+import net.craftminecraft.bungee.bungeeban.util.Metrics;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.plugin.Plugin;
 
 
 public class BungeeBan extends Plugin {
 	private MainConfig config;
+	private Metrics metrics;
 	private File configdir;
 	private Logger logger = null;
 	
 	@Override
 	public void onEnable() {
+		try {
+			metrics = new Metrics(this);
+			metrics.start();
+		} catch (IOException ex) {
+			// Metrics failed to load
+		}
 		configdir = new File("plugins" + File.separator + this.getDescription().getName());
 		this.logger = new PluginLogger(this);
 		
