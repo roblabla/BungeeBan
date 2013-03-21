@@ -3,13 +3,36 @@ package net.craftminecraft.bungee.bungeeban.util;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Map;
+
+import com.google.common.base.Preconditions;
+import com.google.common.collect.Maps;
+
 import net.craftminecraft.bungee.bungeeban.banstore.BanEntry;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 
 public class Utils {
     public static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-	
+    private final static Map<Character, ChatColor> BY_CHAR = Maps.newHashMap();
+
+    static {
+        for (ChatColor color : ChatColor.values()) {
+            BY_CHAR.put(color.toString().charAt(1), color);
+        }
+    }
+    
+    public static ChatColor getColorByChar(char code) {
+        return BY_CHAR.get(code);
+    }
+
+    public static ChatColor getByChar(String code) {
+        Preconditions.checkNotNull(code, "Code cannot be null");
+        Preconditions.checkArgument(code.length() > 0, "Code must have at least one char");
+
+        return BY_CHAR.get(code.charAt(0));
+    }
+    
     public static boolean hasPermission(CommandSender player, String command, String stringargs) {
 		if (player.hasPermission("bans.superadmin")) {
 			return true;
