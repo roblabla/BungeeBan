@@ -37,7 +37,7 @@ public class GBanIpCommand extends Command {
 			sender.sendMessage(ChatColor.RED + ex.getMessage());
 			return;
 		}
-		if (!Utils.hasPermission(sender, "gbanip", "")) {
+		if (!Utils.hasPermission(sender, "gbanip", args[0])) {
 			sender.sendMessage(ChatColor.RED + "You don't have permission to do this.");
 			return;
 		}

@@ -65,7 +65,7 @@ public class BanCommand extends Command {
 			sender.sendMessage(ChatColor.RED + ex.getMessage());
 			return;
 		}
-		if (!Utils.hasPermission(sender, "ban", entry.getServer())) {
+		if (!Utils.hasPermission(sender, "ban", entry.getServer() + "," + entry.getBanned())) {
 			sender.sendMessage(ChatColor.RED + "You don't have permission to do this.");
 			return;
 		}

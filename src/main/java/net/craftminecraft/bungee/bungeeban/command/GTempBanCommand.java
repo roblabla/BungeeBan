@@ -48,7 +48,7 @@ public class GTempBanCommand extends Command {
 			return;
 		}
 
-		if (!Utils.hasPermission(sender, "gtempban", "")) {
+		if (!Utils.hasPermission(sender, "gtempban", entry.getBanned())) {
 			sender.sendMessage(ChatColor.RED + "You don't have permission to do this.");
 			return;
 		}

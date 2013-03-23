@@ -50,7 +50,7 @@ public class GTempBanIpCommand extends Command {
 			return;
 		}
 
-		if (!Utils.hasPermission(sender, "gtempbanip", "")) {
+		if (!Utils.hasPermission(sender, "gtempbanip", args[0])) {
 			sender.sendMessage(ChatColor.RED + "You don't have permission to do this.");
 			return;
 		}

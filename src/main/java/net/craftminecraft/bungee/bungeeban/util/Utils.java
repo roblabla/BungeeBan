@@ -2,6 +2,7 @@ package net.craftminecraft.bungee.bungeeban.util;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
 
@@ -11,6 +12,8 @@ import com.google.common.collect.Maps;
 import net.craftminecraft.bungee.bungeeban.banstore.BanEntry;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
+import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.config.ConfigurationAdapter;
 
 public class Utils {
     public static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
@@ -43,6 +46,20 @@ public class Utils {
 		case "banip":
 		case "tempban":
 		case "tempbanip":
+			if (args.length == 1) {
+				Collection<String> groups = ProxyServer.getInstance().getConfigurationAdapter().getGroups(args[1]);
+				if (groups != null) {	
+					for (String group : groups) {
+						Collection<String> perms = ProxyServer.getInstance().getConfigurationAdapter().getPermissions(group);
+						if (perms != null) {
+							if (perms.contains("bans.exempt") || perms.contains("bans.exempt.*")
+							    || perms.contains("bans.exempt." + args[0])) {
+								return false;
+							}
+						}
+					}
+				}
+			}
 		case "unban":
 		case "unbanip":
 			if (player.hasPermission("bans.admin.*") || player.hasPermission("bans.admin"))
@@ -63,6 +80,18 @@ public class Utils {
 		case "gbanip":
 		case "gtempban":
 		case "gtempbanip":
+			Collection<String> groups = ProxyServer.getInstance().getConfigurationAdapter().getGroups(args[1]);
+			if (groups != null) {	
+				for (String group : groups) {
+					Collection<String> perms = ProxyServer.getInstance().getConfigurationAdapter().getPermissions(group);
+					if (perms != null) {
+						if (perms.contains("bans.exempt") || perms.contains("bans.exempt.*")
+						    || perms.contains("bans.exempt.global")) {
+							return false;
+						}
+					}
+				}
+			}
 		case "gunban":
 		case "gunbanip":
 			if (player.hasPermission("bans.globaladmin"))
@@ -85,6 +114,7 @@ public class Utils {
 			} else if (player.hasPermission("bans.see." + args[0])) {
 				return true;
 			}
+			break;
 		}
 		return false;
 	}

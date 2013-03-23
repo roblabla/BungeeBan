@@ -38,7 +38,7 @@ public class GBanCommand extends Command {
 			sender.sendMessage(ChatColor.RED + ex.getMessage());
 			return;
 		}
-		if (!Utils.hasPermission(sender, "gban", "")) {
+		if (!Utils.hasPermission(sender, "gban", entry.getBanned())) {
 			sender.sendMessage(ChatColor.RED + "You don't have permission to do this.");
 			return;
 		}

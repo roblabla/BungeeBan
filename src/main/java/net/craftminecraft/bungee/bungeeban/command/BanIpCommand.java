@@ -63,7 +63,7 @@ public class BanIpCommand extends Command {
 			sender.sendMessage(ChatColor.RED + ex.getMessage());
 			return;
 		}
-		if (!Utils.hasPermission(sender, "banip", entry.getServer())) {
+		if (!Utils.hasPermission(sender, "banip", entry.getServer() + "," + args[0])) {
 			sender.sendMessage(ChatColor.RED + "You don't have permission to do this.");
 			return;
 		}
