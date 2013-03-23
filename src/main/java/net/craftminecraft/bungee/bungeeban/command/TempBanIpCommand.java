@@ -89,6 +89,7 @@ public class TempBanIpCommand extends Command {
 		}
 		if (!Utils.hasPermission(sender, "tempban", entry.getServer())) {
 			sender.sendMessage(ChatColor.RED + "You don't have permission to do this.");
+			return;
 		}
 		
 		if (BanManager.ban(entry)) {
