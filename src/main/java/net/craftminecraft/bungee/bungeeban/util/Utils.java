@@ -157,4 +157,12 @@ public class Utils {
 		}
 		return reasonBuilder.toString().trim();
 	}
+	
+	public static Integer parseInt(String str) {
+		try {
+			return new Integer(str);
+		} catch (NumberFormatException ex) {
+			return null;
+		}
+	}
 }

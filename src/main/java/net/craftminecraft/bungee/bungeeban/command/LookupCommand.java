@@ -33,11 +33,16 @@ public class LookupCommand extends Command {
 		}
 		List<BanEntry> entries = new ArrayList<BanEntry>();
 		String servers = "";
+		Integer page = 0;
 		if (args.length == 2) {
-			if (args[1].equalsIgnoreCase("ALL")) {
+			if (args[0].equalsIgnoreCase("ALL")) {
 				servers = "*";
 				entries = BanManager.getPlayerBanList(args[0]);
-			} else if (args[1].equalsIgnoreCase("global")) {
+				page = Utils.parseInt(args[1]);
+				if (page == null) {
+					
+				}
+			} else if (args[0].equalsIgnoreCase("global")) {
 				servers = "(GLOBAL)";
 			} else {
 				servers = args[1];

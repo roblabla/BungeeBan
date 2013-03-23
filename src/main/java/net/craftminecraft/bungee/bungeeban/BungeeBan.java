@@ -45,6 +45,8 @@ public class BungeeBan extends Plugin {
 			getLogger().warning("No valid storage type specified in config. Defaulting to file");
 			BanManager.setBanStore(new FileBanStore());
 		}
+		ProxyServer.getInstance().getPluginManager().registerCommand(new BanListCommand());
+		ProxyServer.getInstance().getPluginManager().registerCommand(new LookupCommand());
 		ProxyServer.getInstance().getPluginManager().registerListener(new ProxiedPlayerListener());
 		ProxyServer.getInstance().getPluginManager().registerListener(new PluginMessageListener());
 		ProxyServer.getInstance().getPluginManager().registerCommand(new ReloadBansCommand());
