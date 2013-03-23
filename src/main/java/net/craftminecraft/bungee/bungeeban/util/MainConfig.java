@@ -12,6 +12,10 @@ public class MainConfig extends Config {
 	public static MainConfig getInstance() {
 		return MainConfig.instance;
 	}
+	public static void setInstance(MainConfig instance) {
+		MainConfig.instance = instance;
+	}
+	
 	public MainConfig(BungeeBan plugin) {
         CONFIG_FILE = new File("plugins" + File.separator + plugin.getDescription().getName(), "config.yml");
         CONFIG_HEADER = "BungeeBan Main Config";

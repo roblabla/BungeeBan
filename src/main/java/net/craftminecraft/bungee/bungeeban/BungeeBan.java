@@ -67,7 +67,8 @@ public class BungeeBan extends Plugin {
 	
 	@Override
 	public void onDisable() {
-
+		BanManager.setBanStore(null);
+		MainConfig.setInstance(null);
 	}
 	
 	public Logger getLogger() {
