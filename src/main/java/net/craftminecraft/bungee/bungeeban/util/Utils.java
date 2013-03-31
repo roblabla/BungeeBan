@@ -103,6 +103,10 @@ public class Utils {
 			if (player.hasPermission("bans.command.reloadbans"))
 				return true;
 			break;
+		case "migrate":
+			if (player.hasPermission("bans.command.migrate"))
+				return true;
+			break;
 		case "lookup":
 			if (player.hasPermission("bans.command.lookup") || player.hasPermission("bans.command.lookup." + args[0])) {
 				return true;
