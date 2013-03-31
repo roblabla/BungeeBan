@@ -14,6 +14,7 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 
 public class BanListCommand extends Command {
+	String helpStr = "Page %d/%d";
 	public BanListCommand() {
 		super("banlist");
 	}
@@ -35,16 +36,28 @@ public class BanListCommand extends Command {
 			}
 		}
 		
-		Integer page = 0;
 		List<BanEntry> entries = new ArrayList<BanEntry>();
 		String servers = "";
-		if (player != null) {
-			servers = player.getServer().getInfo().getName();
+		if (player != null) { // If CommandSender is player. 
+			servers = player.getServer().getInfo().getName(); // Default values
 			entries = BanManager.getServerBanList(servers);
-			if (args.length > 0) {
+			Integer page = 1;
+
+			if (args.length > 0) {                            // If there is arguments
 				if (args[0].equalsIgnoreCase("global")) {
-					servers = "(GLOBAL)";
-					entries = BanManager.getServerBanList(servers);
+					servers = "global";
+					entries = BanManager.getServerBanList("(GLOBAL)");
+					if (args.length > 1) {
+						page = Utils.parseInt(args[1]);
+						if (page == null) {
+							sender.sendMessage(ChatColor.RED + "Invalid argument. <required> [optional]");
+							sender.sendMessage(ChatColor.RED + "/banlist [server|global|all] [page]");
+							return;
+						}
+					}
+				} else if (args[0].equalsIgnoreCase("all")) {
+					servers = "*";
+					entries = BanManager.getBanList();
 					if (args.length > 1) {
 						page = Utils.parseInt(args[1]);
 						if (page == null) {
@@ -77,6 +90,25 @@ public class BanListCommand extends Command {
 					return;
 				}
 			} // End if args.length > 0
+			if (!Utils.hasPermission(sender, "banlist", servers)) {
+				sender.sendMessage(ChatColor.RED + "You don't have permission to do this.");
+				return;
+			}
+			if (entries == null || entries.size() == 0) {
+				sender.sendMessage(ChatColor.RED + "No bans to show.");
+				return;
+			}
+			StringBuilder srvlistbuilder = new StringBuilder();
+			for (BanEntry entry : entries) {
+				srvlistbuilder.append(ChatColor.RED + Utils.formatMessage("%banned% | %server% | %reason%\n", entry));
+			}
+			String srvlist = srvlistbuilder.toString();
+			ChatPaginator.ChatPage chatpage = ChatPaginator.paginate(srvlist, page, ChatPaginator.GUARANTEED_NO_WRAP_CHAT_PAGE_WIDTH, ChatPaginator.CLOSED_CHAT_PAGE_HEIGHT-1);
+			for (int i = 0;i < chatpage.getLines().length;i++) {
+				sender.sendMessage(chatpage.getLines()[i]);
+			}
+			
+			sender.sendMessage(String.format(helpStr,chatpage.getPageNumber(),chatpage.getTotalPages()));
 		} else { // If console.
 			if (args[0].equalsIgnoreCase("ALL")) {
 				servers = "*";
@@ -91,25 +123,15 @@ public class BanListCommand extends Command {
 				sender.sendMessage(ChatColor.RED + "Server " + args[0] + " does not exist.");
 				return;
 			}
-		}
-		if (!Utils.hasPermission(sender, "banlist", servers)) {
-			sender.sendMessage(ChatColor.RED + "You don't have permission to do this.");
-			return;
-		}
-
-		if (entries.size() == 0) {
-			sender.sendMessage(ChatColor.RED + "No bans to show.");
-			return;
-		}
-
-		StringBuilder srvlistbuilder = new StringBuilder();
-		for (BanEntry entry : entries) {
-			srvlistbuilder.append(ChatColor.RED + Utils.formatMessage("%banned% | %server% | %reason%\n", entry));
-		}
-		String srvlist = srvlistbuilder.toString();
-		ChatPaginator.ChatPage chatpage = ChatPaginator.paginate(srvlist, page);
-		for (int i = 0;i < chatpage.getLines().length;i++) {
-			sender.sendMessage(chatpage.getLines()[i]);
+			StringBuilder srvlistbuilder = new StringBuilder();
+			for (BanEntry entry : entries) {
+				srvlistbuilder.append(ChatColor.RED + Utils.formatMessage("%banned% | %server% | %reason%\n", entry));
+			}
+			String srvlist = srvlistbuilder.toString();
+			String[] srvlistmsgs = srvlist.split("\n");
+			for (int i = 0;i < srvlistmsgs.length;i++) {
+				sender.sendMessage(srvlistmsgs[i]);
+			}
 		}
 	}
 }

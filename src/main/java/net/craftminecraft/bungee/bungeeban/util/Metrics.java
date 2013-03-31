@@ -360,7 +360,7 @@ public class Metrics {
         String pluginName = description.getName();
         boolean onlineMode = ProxyServer.getInstance().getConfigurationAdapter().getBoolean("online_mode", true); // TRUE if online mode is enabled
         String pluginVersion = description.getVersion();
-        String serverVersion = ProxyServer.getInstance().getVersion();
+        String serverVersion = ProxyServer.getInstance().getVersion() + " (MC: " + ProxyServer.getInstance().getGameVersion() + ")";
         int playersOnline = ProxyServer.getInstance().getPlayers().size();
 
         // END server software specific section -- all code below does not use any code outside of this class / Java

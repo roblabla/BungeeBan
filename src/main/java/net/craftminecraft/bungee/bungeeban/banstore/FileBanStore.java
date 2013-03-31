@@ -126,10 +126,10 @@ public class FileBanStore implements IBanStore {
         }
 	}
 
-	private BanEntry entryFromFile(String line) {
+	private BanEntry entryFromFile(String line, boolean ipban) {
 		String[] astring = line.trim().split(Pattern.quote("|"));
-		BanEntry.Builder banentry = new BanEntry.Builder(astring[0].trim()).global();
-	
+		BanEntry.Builder banentry = new BanEntry.Builder(astring[0].trim()).global().ipban(ipban);
+
 		// Support old-style banlist, one username per line.
 	    if (astring.length == 1)
 	        return banentry.build();
@@ -162,6 +162,7 @@ public class FileBanStore implements IBanStore {
 	    	return banentry.build();
 	    
 	    banentry.server(astring[5].trim());
+	    
 	    return banentry.build();
 	}
 	
@@ -198,16 +199,29 @@ public class FileBanStore implements IBanStore {
 			Scanner s = new Scanner(fileplayer);
 			while (s.hasNext()) {
 				String strentry = s.nextLine();
-				BanEntry entry = entryFromFile(strentry);
+				BanEntry entry;
+				try {
+					entry = entryFromFile(strentry, false);
+				} catch (IllegalArgumentException ex) {
+					ex.printStackTrace();
+					continue;
+				}
 				playerBanned.put(entry.getBanned(), entry.getServer(), entry);
+
 			}
 			s.close();
 			
 			s = new Scanner(fileip);
 			while (s.hasNext()) {
 				String strentry = s.nextLine();
-				BanEntry entry = entryFromFile(strentry);
-				ipBanned.put(entry.getBanned(), entry.getServer(), entry);
+				BanEntry entry;
+				try {
+					entry = entryFromFile(strentry, true);
+				} catch (IllegalArgumentException ex) {
+					ex.printStackTrace();
+					continue;
+				}
+				playerBanned.put(entry.getBanned(), entry.getServer(), entry);
 			}
 			s.close();
 			

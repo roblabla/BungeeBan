@@ -13,7 +13,6 @@ import net.craftminecraft.bungee.bungeeban.banstore.BanEntry;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
-import net.md_5.bungee.api.config.ConfigurationAdapter;
 
 public class Utils {
     public static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
@@ -105,9 +104,15 @@ public class Utils {
 				return true;
 			break;
 		case "lookup":
+			if (player.hasPermission("bans.command.lookup") || player.hasPermission("bans.command.lookup." + args[0])) {
+				return true;
+			}
 			break;
 		case "banlist":
-			
+			if (player.hasPermission("bans.command.banlist")) {
+				return true;
+			}
+			break;
 		case "see":
 			if (player.hasPermission("bans.player")) {
 				return true;

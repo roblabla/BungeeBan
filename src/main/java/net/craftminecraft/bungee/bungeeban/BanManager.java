@@ -6,7 +6,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 
 import net.craftminecraft.bungee.bungeeban.banstore.BanEntry;
 import net.craftminecraft.bungee.bungeeban.banstore.IBanStore;
@@ -43,7 +42,8 @@ public class BanManager {
 		type = ((entry.isGlobal()) ? "g" : "") + type;
 		if (banstore.ban(entry)) {
 			for (ProxiedPlayer player : ProxyServer.getInstance().getPlayers()) {
-				if (player.getServer().getInfo().getName().equals(entry.getServer())
+				if ((player != null && player.getServer() != null && 
+						player.getServer().getInfo().getName().equals(entry.getServer()))
 					|| entry.isGlobal() 
 					|| MainConfig.getInstance().message_sendLocalMsgGlobally) {
 					if (Utils.hasPermission(player, "see", type))
@@ -58,7 +58,7 @@ public class BanManager {
 
 	public static BanEntry getBan(String playerorip, String server) {
 		if (isIP(playerorip)) {
-			return banstore.getIPBanList().get(playerorip, server);
+			return banstore.getIPBanList().get(playerorip.toLowerCase(), server);
 		} else {
 			return banstore.getBanList().get(playerorip, server);
 		}
@@ -70,11 +70,11 @@ public class BanManager {
 
 	@Deprecated
 	public static List<BanEntry> getBanList(String playerorip) {
-		return getPlayerBanList(playerorip);
+		return getPlayerBanList(playerorip.toLowerCase());
 	}
 
 	public static List<BanEntry> getPlayerBanList(String player) {
-		return ImmutableList.copyOf(banstore.getBanList().row(player).values());
+		return ImmutableList.copyOf(banstore.getBanList().row(player.toLowerCase()).values());
 	}
 
 	public static List<BanEntry> getIPBanList(String ip) {
@@ -97,7 +97,7 @@ public class BanManager {
 	}
 
 	public static boolean gunban(String playerorip) {
-		BanEntry.Builder builder = new BanEntry.Builder(playerorip).global();
+		BanEntry.Builder builder = new BanEntry.Builder(playerorip.toLowerCase()).global();
 		BanEntry entry;
 		if (isIP(playerorip)) {
 			entry = builder.ipban().build();
@@ -122,7 +122,7 @@ public class BanManager {
 	}
 	
 	public static boolean unban(String playerorip, String server) {
-		BanEntry.Builder builder = new BanEntry.Builder(playerorip, server);
+		BanEntry.Builder builder = new BanEntry.Builder(playerorip.toLowerCase(), server);
 		BanEntry entry;
 		if (isIP(playerorip)) {
 			entry = builder.ipban().build();

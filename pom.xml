@@ -15,12 +15,8 @@
   </profiles>
   <groupId>net.craftminecraft.bungee</groupId>
   <artifactId>bungeeban</artifactId>
-  <version>0.5-b${build.number}</version>
+  <version>0.6-SNAPSHOT</version>
   <repositories>
-    <repository>
-      <id>localhost</id>
-      <url>file:${project.basedir}/repo</url>
-    </repository>
     <repository>
       <id>sonatype-oss-public</id>
       <url>https://oss.sonatype.org/content/groups/public/</url>
@@ -31,6 +27,10 @@
         <enabled>true</enabled>
       </snapshots>
     </repository>
+    <repository>
+      <id>craftminecraft-dev</id>
+      <url>http://repo.craftminecraft.net/content/groups/public/</url>
+    </repository>
   </repositories>
   <dependencies>
     <dependency>
@@ -39,14 +39,14 @@
   	  <version>1.4.7-SNAPSHOT</version>
   	</dependency>
   	<dependency>
-  	  <groupId>lib</groupId>
-  	  <artifactId>SQLibrary</artifactId>
+  	  <groupId>net.craftminecraft.bungee</groupId>
+  	  <artifactId>sqlibrary</artifactId>
   	  <version>4.2</version>
   	</dependency>
   	<dependency>
-  	  <groupId>lib</groupId>
+  	  <groupId>net.craftminecraft.bungee</groupId>
   	  <artifactId>bungeeyaml</artifactId>
-  	  <version>0.0.2-SNAPSHOT</version>
+  	  <version>1.0-SNAPSHOT</version>
   	</dependency>
   </dependencies>
   <build>

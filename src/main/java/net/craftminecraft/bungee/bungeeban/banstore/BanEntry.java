@@ -148,8 +148,9 @@ public class BanEntry {
     			} else if (!BanManager.isIP(banned)) {
     				throw new IllegalArgumentException("Not a legal ip, and no user with this name is online");
     			}
+    		} else {
+    			banned = banned.toLowerCase();
     		}
-
     		return new BanEntry(this);
     	}
     }
