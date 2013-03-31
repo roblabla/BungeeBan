@@ -34,9 +34,9 @@ public class MigrateCommand extends Command {
 			return;
 		}
 		IBanStore store;
-		if (args[0] == "file") {
+		if (args[0].equals("file")) {
 			store = new FileBanStore();
-		} else if (args[0] == "mysql") {
+		} else if (args[0].equals("mysql")) {
 			store = new MySQLBanStore(this.plugin.getLogger(), MainConfig.getInstance());
 		} else {
 			sender.sendMessage(ChatColor.RED + "Wrong command format. <required> [optional]");
