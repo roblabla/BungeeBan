@@ -7,9 +7,11 @@ import net.craftminecraft.bungee.bungeeban.banstore.FileBanStore;
 import net.craftminecraft.bungee.bungeeban.banstore.IBanStore;
 import net.craftminecraft.bungee.bungeeban.banstore.MySQLBanStore;
 import net.craftminecraft.bungee.bungeeban.util.MainConfig;
+import net.craftminecraft.bungee.bungeeban.util.Utils;
 import net.craftminecraft.bungee.bungeeyaml.InvalidConfigurationException;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 
 public class MigrateCommand extends Command {
@@ -21,6 +23,11 @@ public class MigrateCommand extends Command {
 	
 	@Override
 	public void execute(CommandSender sender, String[] args) {
+		if (sender instanceof ProxiedPlayer) {
+			if (!Utils.hasPermission(sender, "migrate", "")) {
+				return;
+			}
+		}
 		if (args.length != 1) {
 			sender.sendMessage(ChatColor.RED + "Wrong command format. <required> [optional]");
 			sender.sendMessage(ChatColor.RED + "/migrate <mysql|file>");
