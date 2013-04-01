@@ -58,9 +58,9 @@ public class BanManager {
 
 	public static BanEntry getBan(String playerorip, String server) {
 		if (isIP(playerorip)) {
-			return banstore.getIPBanList().get(playerorip.toLowerCase(), server);
+			return banstore.getIPBanList().get(playerorip, server);
 		} else {
-			return banstore.getBanList().get(playerorip, server);
+			return banstore.getBanList().get(playerorip.toLowerCase(), server);
 		}
 	}
 
@@ -101,7 +101,7 @@ public class BanManager {
 		BanEntry entry;
 		if (isIP(playerorip)) {
 			entry = builder.ipban().build();
-			if(banstore.gunbanIP(playerorip)) {
+			if(banstore.gunbanIP(playerorip.toLowerCase())) {
 				for (ProxiedPlayer player : ProxyServer.getInstance().getPlayers()) {
 					if (Utils.hasPermission(player, "see", "gunbanip"))
 						player.sendMessage(Utils.formatMessage(MainConfig.getInstance().getMessageByType("gunbanip"), entry));
@@ -110,7 +110,7 @@ public class BanManager {
 			}
 		} else {
 			entry = builder.build();
-			if (banstore.gunban(playerorip)) {
+			if (banstore.gunban(playerorip.toLowerCase())) {
 				for (ProxiedPlayer player : ProxyServer.getInstance().getPlayers()) {
 					if (Utils.hasPermission(player, "see", "gunban"))
 						player.sendMessage(Utils.formatMessage(MainConfig.getInstance().getMessageByType("gunban"), entry));
@@ -126,7 +126,7 @@ public class BanManager {
 		BanEntry entry;
 		if (isIP(playerorip)) {
 			entry = builder.ipban().build();
-			if (banstore.unbanIP(playerorip, server)) {
+			if (banstore.unbanIP(playerorip.toLowerCase(), server)) {
 				for (ProxiedPlayer player : ProxyServer.getInstance().getPlayers()) {
 					if ((MainConfig.getInstance().message_sendLocalMsgGlobally
 						|| player.getServer().getInfo().getName().equalsIgnoreCase(server))
@@ -138,7 +138,7 @@ public class BanManager {
 			}
 		} else {
 			entry = builder.build();
-			if (banstore.unban(playerorip, server)) {
+			if (banstore.unban(playerorip.toLowerCase(), server)) {
 				for (ProxiedPlayer player : ProxyServer.getInstance().getPlayers()) {
 					if ((player.getServer().getInfo().getName().equalsIgnoreCase(server)
 						|| MainConfig.getInstance().message_sendLocalMsgGlobally)
