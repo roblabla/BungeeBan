@@ -79,7 +79,7 @@ public class Utils {
 		case "gbanip":
 		case "gtempban":
 		case "gtempbanip":
-			Collection<String> groups = ProxyServer.getInstance().getConfigurationAdapter().getGroups(args[1]);
+			Collection<String> groups = ProxyServer.getInstance().getConfigurationAdapter().getGroups(args[0]);
 			if (groups != null) {	
 				for (String group : groups) {
 					Collection<String> perms = ProxyServer.getInstance().getConfigurationAdapter().getPermissions(group);
