@@ -35,7 +35,7 @@ public class MigrateCommand extends Command {
 		}
 		IBanStore store;
 		if (args[0].equals("file")) {
-			store = new FileBanStore();
+			store = new FileBanStore(plugin);
 		} else if (args[0].equals("mysql")) {
 			store = new MySQLBanStore(this.plugin.getLogger(), MainConfig.getInstance());
 		} else {

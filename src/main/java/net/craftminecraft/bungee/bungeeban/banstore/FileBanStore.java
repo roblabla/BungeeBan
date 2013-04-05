@@ -8,13 +8,16 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Iterator;
 import java.util.Scanner;
+import java.util.logging.Level;
 import java.util.regex.Pattern;
 
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 
 
+import net.craftminecraft.bungee.bungeeban.BungeeBan;
 import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.plugin.Plugin;
 
 
 public class FileBanStore implements IBanStore {
@@ -23,8 +26,10 @@ public class FileBanStore implements IBanStore {
 	private File fileplayer = new File("plugins" + File.separator + "BungeeBan", "banned-players.txt");
 	private File fileip = new File("plugins" + File.separator + "BungeeBan", "banned-ips.txt");
     public static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z");
+    private BungeeBan plugin;
 	
-	public FileBanStore() {
+	public FileBanStore(BungeeBan plugin) {
+		this.plugin = plugin;
 		playerBanned = HashBasedTable.create();
 		ipBanned = HashBasedTable.create();
 		reloadBanList();
@@ -95,7 +100,7 @@ public class FileBanStore implements IBanStore {
             //save ip bans
             printwriter = new PrintWriter(new FileWriter(this.fileip, false));
 
-            for (Table.Cell<String, String, BanEntry> cell : playerBanned.cellSet()) {
+            for (Table.Cell<String, String, BanEntry> cell : ipBanned.cellSet()) {
                 printwriter.println(entryToString(cell.getValue()));
             }
             printwriter.close();
@@ -168,7 +173,6 @@ public class FileBanStore implements IBanStore {
 	
 	public String entryToString(BanEntry entry) {
         StringBuilder stringbuilder = new StringBuilder();
-
         stringbuilder.append(entry.getBanned());
         stringbuilder.append("|");
         stringbuilder.append(dateFormat.format(entry.getCreated()));
@@ -203,7 +207,8 @@ public class FileBanStore implements IBanStore {
 				try {
 					entry = entryFromFile(strentry, false);
 				} catch (IllegalArgumentException ex) {
-					ex.printStackTrace();
+					plugin.getLogger().log(Level.WARNING, "Malformed entry in player-bans.txt :\n " 
+															+ strentry, ex);
 					continue;
 				}
 				playerBanned.put(entry.getBanned(), entry.getServer(), entry);
@@ -218,18 +223,17 @@ public class FileBanStore implements IBanStore {
 				try {
 					entry = entryFromFile(strentry, true);
 				} catch (IllegalArgumentException ex) {
-					ex.printStackTrace();
+					plugin.getLogger().log(Level.WARNING, "Malformed entry in ip-bans.txt :\n " 
+															+ strentry, ex);
 					continue;
 				}
-				playerBanned.put(entry.getBanned(), entry.getServer(), entry);
+				ipBanned.put(entry.getBanned(), entry.getServer(), entry);
 			}
 			s.close();
 			
 		} catch (Exception e) {
-			ProxyServer.getInstance().getLogger().severe("[BungeeBan] Could not load config file. Please send me the following stacktrace :");
-			e.printStackTrace();
+			plugin.getLogger().log(Level.SEVERE, "Could not load banlist files.", e);
 			return;
 		}
-
 	}
 }

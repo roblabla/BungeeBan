@@ -38,12 +38,12 @@ public class BungeeBan extends Plugin {
 
 		config = new MainConfig(this);
 		if (config.storagetype.equalsIgnoreCase("file")) {
-			BanManager.setBanStore(new FileBanStore());
+			BanManager.setBanStore(new FileBanStore(this));
 		} else if (config.storagetype.equalsIgnoreCase("mysql")) {
 			BanManager.setBanStore(new MySQLBanStore(logger, config));
 		} else {
 			getLogger().warning("No valid storage type specified in config. Defaulting to file");
-			BanManager.setBanStore(new FileBanStore());
+			BanManager.setBanStore(new FileBanStore(this));
 		}
 		ProxyServer.getInstance().getPluginManager().registerCommand(new MigrateCommand(this));
 		ProxyServer.getInstance().getPluginManager().registerCommand(new BanListCommand());
