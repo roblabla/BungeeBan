@@ -18,7 +18,13 @@ public class ProxiedPlayerListener implements Listener {
 		BanEntry ban = BanManager.getBan(e.getConnection().getName(), "(GLOBAL)");
 		if (ban != null) {
 			e.setCancelled(true);
-			e.setCancelReason(ban.getReason());
+			e.setCancelReason(Utils.formatMessage(ban.getReason(), ban));
+			return;
+		}
+		ban = BanManager.getBan(e.getConnection().getAddress().getAddress().getHostAddress(), "(GLOBAL)");
+		if (ban != null) {
+			e.setCancelled(true);
+			e.setCancelReason(Utils.formatMessage(ban.getReason(), ban));
 		}
 	}
 	
