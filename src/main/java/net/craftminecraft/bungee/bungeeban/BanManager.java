@@ -2,6 +2,8 @@ package net.craftminecraft.bungee.bungeeban;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -101,21 +103,51 @@ public class BanManager {
 		BanEntry entry;
 		if (isIP(playerorip)) {
 			entry = builder.ipban().build();
-			if(banstore.gunbanIP(playerorip.toLowerCase())) {
-				for (ProxiedPlayer player : ProxyServer.getInstance().getPlayers()) {
-					if (Utils.hasPermission(player, "see", "gunbanip"))
-						player.sendMessage(Utils.formatMessage(MainConfig.getInstance().getMessageByType("gunbanip"), entry));
+			if (!MainConfig.getInstance().gunbanRemovesLocalBans) {
+				if(banstore.gunbanIP(playerorip.toLowerCase())) {
+					for (ProxiedPlayer player : ProxyServer.getInstance().getPlayers()) {
+						if (Utils.hasPermission(player, "see", "gunbanip"))
+							player.sendMessage(Utils.formatMessage(MainConfig.getInstance().getMessageByType("gunbanip"), entry));
+					}
+					return true;
 				}
-				return true;
+			} else {
+				if (banstore.getIPBanList().row(playerorip).size() > 0) {
+					for (Entry<String, BanEntry> entries : banstore.getIPBanList().row(playerorip).entrySet()) {
+						banstore.unbanIP(playerorip, entries.getKey());
+					}
+					for (ProxiedPlayer player : ProxyServer.getInstance().getPlayers()) {
+						if (Utils.hasPermission(player, "see", "gunbanip"))
+							player.sendMessage(Utils.formatMessage(MainConfig.getInstance().getMessageByType("gunbanip"), entry));
+					}
+					return true;
+				} else {
+					return false;
+				}
 			}
 		} else {
 			entry = builder.build();
-			if (banstore.gunban(playerorip.toLowerCase())) {
-				for (ProxiedPlayer player : ProxyServer.getInstance().getPlayers()) {
-					if (Utils.hasPermission(player, "see", "gunban"))
-						player.sendMessage(Utils.formatMessage(MainConfig.getInstance().getMessageByType("gunban"), entry));
+			if (!MainConfig.getInstance().gunbanRemovesLocalBans) {
+				if (banstore.gunban(playerorip.toLowerCase())) {
+					for (ProxiedPlayer player : ProxyServer.getInstance().getPlayers()) {
+						if (Utils.hasPermission(player, "see", "gunban"))
+							player.sendMessage(Utils.formatMessage(MainConfig.getInstance().getMessageByType("gunban"), entry));
+					}
+					return true;
 				}
-				return true;
+			} else {
+				if (banstore.getBanList().row(playerorip.toLowerCase()).size() > 0) {
+					for (Entry<String, BanEntry> entries : banstore.getBanList().row(playerorip.toLowerCase()).entrySet()) {
+						banstore.unban(playerorip.toLowerCase(), entries.getKey());
+					}
+					for (ProxiedPlayer player : ProxyServer.getInstance().getPlayers()) {
+						if (Utils.hasPermission(player, "see", "gunban"))
+							player.sendMessage(Utils.formatMessage(MainConfig.getInstance().getMessageByType("gunban"), entry));
+					}
+					return true;
+				} else {
+					return false;
+				}
 			}
 		}
 		return false;

@@ -60,6 +60,8 @@ public class MainConfig extends Config {
 	public String database_name = "minecraft";
 	public String database_username = "root";
 	public String database_password = "foobar";
+
+	public boolean gunbanRemovesLocalBans = false;
 	
 	public boolean defaults_reasonExtend = false;
 	public String defaults_banreason = "Banned by an operator.";
