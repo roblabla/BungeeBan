@@ -16,6 +16,9 @@
   <groupId>net.craftminecraft.bungee</groupId>
   <artifactId>bungeeban</artifactId>
   <version>0.6-SNAPSHOT</version>
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
   <repositories>
     <repository>
       <id>sonatype-oss-public</id>
