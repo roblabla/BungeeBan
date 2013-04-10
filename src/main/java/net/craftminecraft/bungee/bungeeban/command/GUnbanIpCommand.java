@@ -23,11 +23,14 @@ public class GUnbanIpCommand extends Command {
 			sender.sendMessage(ChatColor.RED + "You don't have permission to do this.");
 			return;
 		}
-		if (BanManager.gunban(args[0])) {
-			sender.sendMessage(ChatColor.RED + args[0] + " has been unbanned.");
-		} else {
-			sender.sendMessage(ChatColor.RED + args[0] + " was not banned.");
+		try {
+			if (BanManager.gunban(args[0])) {
+				sender.sendMessage(ChatColor.RED + args[0] + " has been unbanned.");
+			} else {
+				sender.sendMessage(ChatColor.RED + args[0] + " was not banned.");
+			}
+		} catch (IllegalArgumentException ex) {
+			sender.sendMessage(ChatColor.RED + ex.getMessage());
 		}
 	}
-
 }

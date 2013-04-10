@@ -44,10 +44,14 @@ public class UnbanCommand extends Command {
 			return;
 		}
 
-		if (BanManager.unban(args[0], server)) {
-			sender.sendMessage(ChatColor.RED + args[0] + " has been unbanned.");
-		} else {
-			sender.sendMessage(ChatColor.RED + args[0] + " was not banned.");
+		try {
+			if (BanManager.unban(args[0], server)) {
+				sender.sendMessage(ChatColor.RED + args[0] + " has been unbanned.");
+			} else {
+				sender.sendMessage(ChatColor.RED + args[0] + " was not banned.");
+			}
+		} catch (IllegalArgumentException ex) {
+			sender.sendMessage(ChatColor.RED + ex.getMessage());
 		}
 	}
 }
