@@ -53,7 +53,7 @@ public class MainConfig extends Config {
 		default: return "";
 		}
 	}
-	
+
 	public String storagetype = "file";
 	public String database_address = "localhost";
 	public int database_port = 3306;
@@ -61,6 +61,7 @@ public class MainConfig extends Config {
 	public String database_username = "root";
 	public String database_password = "foobar";
 	
+	public boolean defaults_reasonExtend = false;
 	public String defaults_banreason = "Banned by an operator.";
 	public String defaults_gbanreason = "Banned by an operator.";
 	public String defaults_tempbanreason = "Banned by an operator for %until%.";

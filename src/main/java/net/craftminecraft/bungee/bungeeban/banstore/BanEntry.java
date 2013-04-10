@@ -135,13 +135,21 @@ public class BanEntry {
     		if (source == null || source.isEmpty()) {
     			source = "(Unknown)";
     		}
-    		if (reason == null) {
+    		if (!MainConfig.getInstance().defaults_reasonExtend && reason == null) {
     			String type = "ban";
     			type = ((expiry != null) ? "temp" : "") + type;
     			type = ((server.equalsIgnoreCase("(GLOBAL)")) ? "g" : "") + type;
     			reason = MainConfig.getInstance().getReasonByType(type);
+    		} else if (MainConfig.getInstance().defaults_reasonExtend) {
+    			if (reason == null) {
+    				reason = "";
+    			}
+    			String type = "ban";
+    			type = ((expiry != null) ? "temp" : "") + type;
+    			type = ((server.equalsIgnoreCase("(GLOBAL)")) ? "g" : "") + type;
+    			reason = MainConfig.getInstance().getReasonByType(type).replaceAll("%reason%", reason);
     		}
-    		
+
     		if (ipban) {
     			if (ProxyServer.getInstance().getPlayer(banned) != null) {
     				banned = ProxyServer.getInstance().getPlayer(banned).getAddress().getAddress().getHostAddress();
