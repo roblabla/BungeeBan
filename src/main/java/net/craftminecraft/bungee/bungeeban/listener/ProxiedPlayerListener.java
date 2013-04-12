@@ -15,15 +15,15 @@ public class ProxiedPlayerListener implements Listener {
 	}
 	
 	@Subscribe
-	public void onPlayerJoin(PostLoginEvent e) {
-		BanEntry ban = BanManager.getBan(e.getPlayer().getName(), "(GLOBAL)");
+	public void onPlayerJoin(LoginEvent e) {
+		BanEntry ban = BanManager.getBan(e.getConnection().getName(), "(GLOBAL)");
 		if (ban != null) {
-			e.getPlayer().disconnect(Utils.formatMessage(ban.getReason(), ban));
+			e.getConnection().disconnect(Utils.formatMessage(ban.getReason(), ban));
 			return;
 		}
-		ban = BanManager.getBan(e.getPlayer().getAddress().getAddress().getHostAddress(), "(GLOBAL)");
+		ban = BanManager.getBan(e.getConnection().getAddress().getAddress().getHostAddress(), "(GLOBAL)");
 		if (ban != null) {
-			e.getPlayer().disconnect(Utils.formatMessage(ban.getReason(), ban));
+			e.getConnection().disconnect(Utils.formatMessage(ban.getReason(), ban));
 			return;
 		}
 	}
@@ -32,11 +32,15 @@ public class ProxiedPlayerListener implements Listener {
 	public void onServerConnect(ServerConnectEvent e) {
 		BanEntry ban = BanManager.getBan(e.getPlayer().getName(), e.getTarget().getName());
 		if (ban != null) {
+			// Ugly workaround the player joined... player left messages
+			e.setTarget(e.getPlayer().getServer().getInfo());
 			e.getPlayer().disconnect(Utils.formatMessage(ban.getReason(), ban));
 			return;
 		} 
 		ban = BanManager.getBan(e.getPlayer().getAddress().getAddress().getHostAddress(), e.getTarget().getName());
 		if (ban != null) {
+			// Ugly workaround the player joined... player left messages
+			e.setTarget(e.getPlayer().getServer().getInfo());
 			e.getPlayer().disconnect(Utils.formatMessage(ban.getReason(), ban));
 		}
 		return;
