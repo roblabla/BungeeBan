@@ -137,7 +137,7 @@ public class FileBanStore implements IBanStore {
 
 		// Support old-style banlist, one username per line.
 	    if (astring.length == 1)
-	        return banentry.build();
+	        return banentry.build(true);
 	
 	    try {
 	   		banentry.created(dateFormat.parse(astring[1].trim()));
@@ -145,11 +145,11 @@ public class FileBanStore implements IBanStore {
 	   		ProxyServer.getInstance().getLogger().severe("[BungeeBan] Could not read creation date format for ban entry '" + astring[0].trim() + "'.");
 	    }
 	   	if (astring.length == 2) 
-	    	return banentry.build();
+	    	return banentry.build(true);
 	
 	    banentry.source(astring[2].trim());
 	    if (astring.length == 3)
-	    	return banentry.build();
+	    	return banentry.build(true);
 	
 	    try {
 	    	String expiry = astring[3].trim();
@@ -160,15 +160,15 @@ public class FileBanStore implements IBanStore {
 	    	System.out.println("Could not read expiry date format for ban entry '" + astring[0].trim() + "'");
 	    }
 	    if (astring.length == 4)
-	    	return banentry.build();
+	    	return banentry.build(true);
 	    
 	    banentry.reason(astring[4].trim());
 	    if (astring.length == 5)
-	    	return banentry.build();
+	    	return banentry.build(true);
 	    
 	    banentry.server(astring[5].trim());
 	    
-	    return banentry.build();
+	    return banentry.build(true);
 	}
 	
 	public String entryToString(BanEntry entry) {

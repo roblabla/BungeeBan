@@ -123,6 +123,10 @@ public class BanEntry {
     	}
     	
     	public BanEntry build() {
+    		return build(false);
+    	}
+    	
+    	public BanEntry build(boolean loading) {
     		if (banned == null || banned.isEmpty()) {
     			throw new IllegalArgumentException("Username cannot be null or empty");
     		}
@@ -140,7 +144,7 @@ public class BanEntry {
     			type = ((expiry != null) ? "temp" : "") + type;
     			type = ((server.equalsIgnoreCase("(GLOBAL)")) ? "g" : "") + type;
     			reason = MainConfig.getInstance().getReasonByType(type);
-    		} else if (MainConfig.getInstance().defaults_reasonExtend) {
+    		} else if (MainConfig.getInstance().defaults_reasonExtend && !loading) {
     			if (reason == null) {
     				reason = "";
     			}
