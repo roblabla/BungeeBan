@@ -2,6 +2,8 @@ package net.craftminecraft.bungee.bungeeban;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -13,6 +15,7 @@ import net.craftminecraft.bungee.bungeeban.util.MainConfig;
 import net.craftminecraft.bungee.bungeeban.util.PluginLogger;
 import net.craftminecraft.bungee.bungeeban.util.Metrics;
 import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
 
 
@@ -21,7 +24,6 @@ public class BungeeBan extends Plugin {
 	private Metrics metrics;
 	private File configdir;
 	private Logger logger = null;
-	
 	@Override
 	public void onEnable() {
 		try {
@@ -45,27 +47,27 @@ public class BungeeBan extends Plugin {
 			getLogger().warning("No valid storage type specified in config. Defaulting to file");
 			BanManager.setBanStore(new FileBanStore(this));
 		}
-		ProxyServer.getInstance().getPluginManager().registerCommand(new MigrateCommand(this));
-		ProxyServer.getInstance().getPluginManager().registerCommand(new BanListCommand());
-		ProxyServer.getInstance().getPluginManager().registerCommand(new LookupCommand());
-		ProxyServer.getInstance().getPluginManager().registerListener(new ProxiedPlayerListener());
-		ProxyServer.getInstance().getPluginManager().registerListener(new PluginMessageListener());
-		ProxyServer.getInstance().getPluginManager().registerCommand(new ReloadBansCommand());
-		ProxyServer.getInstance().getPluginManager().registerCommand(new BanCommand());
-		ProxyServer.getInstance().getPluginManager().registerCommand(new TempBanCommand());
-		ProxyServer.getInstance().getPluginManager().registerCommand(new GBanCommand());
-		ProxyServer.getInstance().getPluginManager().registerCommand(new GTempBanCommand());
-		ProxyServer.getInstance().getPluginManager().registerCommand(new UnbanCommand());
-		ProxyServer.getInstance().getPluginManager().registerCommand(new BanIpCommand());
-		ProxyServer.getInstance().getPluginManager().registerCommand(new TempBanIpCommand());
-		ProxyServer.getInstance().getPluginManager().registerCommand(new GBanIpCommand());
-		ProxyServer.getInstance().getPluginManager().registerCommand(new GTempBanIpCommand());
-		ProxyServer.getInstance().getPluginManager().registerCommand(new UnbanIpCommand());
-		ProxyServer.getInstance().getPluginManager().registerCommand(new GUnbanCommand());
-		ProxyServer.getInstance().getPluginManager().registerCommand(new GUnbanIpCommand());
+		ProxyServer.getInstance().getPluginManager().registerListener(this, new ProxiedPlayerListener(this));
+		ProxyServer.getInstance().getPluginManager().registerListener(this, new PluginMessageListener());
+		ProxyServer.getInstance().getPluginManager().registerCommand(this, new MigrateCommand(this));
+		ProxyServer.getInstance().getPluginManager().registerCommand(this, new BanListCommand());
+		ProxyServer.getInstance().getPluginManager().registerCommand(this, new LookupCommand());
+		ProxyServer.getInstance().getPluginManager().registerCommand(this, new ReloadBansCommand());
+		ProxyServer.getInstance().getPluginManager().registerCommand(this, new BanCommand());
+		ProxyServer.getInstance().getPluginManager().registerCommand(this, new TempBanCommand());
+		ProxyServer.getInstance().getPluginManager().registerCommand(this, new GBanCommand());
+		ProxyServer.getInstance().getPluginManager().registerCommand(this, new GTempBanCommand());
+		ProxyServer.getInstance().getPluginManager().registerCommand(this, new UnbanCommand());
+		ProxyServer.getInstance().getPluginManager().registerCommand(this, new BanIpCommand());
+		ProxyServer.getInstance().getPluginManager().registerCommand(this, new TempBanIpCommand());
+		ProxyServer.getInstance().getPluginManager().registerCommand(this, new GBanIpCommand());
+		ProxyServer.getInstance().getPluginManager().registerCommand(this, new GTempBanIpCommand());
+		ProxyServer.getInstance().getPluginManager().registerCommand(this, new UnbanIpCommand());
+		ProxyServer.getInstance().getPluginManager().registerCommand(this, new GUnbanCommand());
+		ProxyServer.getInstance().getPluginManager().registerCommand(this, new GUnbanIpCommand());
 		getLogger().log(Level.INFO,"Now loaded.");
 	}
-	
+
 	@Override
 	public void onDisable() {
 		BanManager.setBanStore(null);
