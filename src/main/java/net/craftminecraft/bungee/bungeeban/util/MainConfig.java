@@ -4,7 +4,7 @@ import java.io.File;
 import java.util.logging.Level;
 
 import net.craftminecraft.bungee.bungeeban.BungeeBan;
-import net.craftminecraft.bungee.bungeeyaml.InvalidConfigurationException;
+import net.craftminecraft.bungee.bungeeyaml.bukkitapi.InvalidConfigurationException;
 import net.craftminecraft.bungee.bungeeyaml.supereasyconfig.Config;
 
 public class MainConfig extends Config {

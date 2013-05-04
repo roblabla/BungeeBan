@@ -17,7 +17,6 @@ import com.google.common.collect.Table;
 
 import net.craftminecraft.bungee.bungeeban.BungeeBan;
 import net.md_5.bungee.api.ProxyServer;
-import net.md_5.bungee.api.plugin.Plugin;
 
 
 public class FileBanStore implements IBanStore {
@@ -235,5 +234,17 @@ public class FileBanStore implements IBanStore {
 			plugin.getLogger().log(Level.SEVERE, "Could not load banlist files.", e);
 			return;
 		}
+	}
+
+	@Override
+	public BanEntry isBanned(String player, String server) {
+		removeExpired();
+		return playerBanned.get(player, server);
+	}
+
+	@Override
+	public BanEntry isIPBanned(String ip, String server) {
+		removeExpired();
+		return ipBanned.get(ip, server);
 	}
 }
