@@ -23,7 +23,7 @@ public class PluginMessageListener implements Listener {
 		// Checks if the one sending the message is the server.
 		if (e.getTag() != "BungeeBan" || !(e.getSender() instanceof Server))
 			return;
-		String servername = ((Server)e.getSender()).getInfo().getName();
+		//String servername = ((Server)e.getSender()).getInfo().getName();
 		ByteArrayInputStream bytestream = new ByteArrayInputStream(e.getData());
 		DataInputStream datastream = new DataInputStream(bytestream);
 		try {

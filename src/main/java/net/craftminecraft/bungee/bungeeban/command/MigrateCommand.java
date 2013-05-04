@@ -8,7 +8,7 @@ import net.craftminecraft.bungee.bungeeban.banstore.IBanStore;
 import net.craftminecraft.bungee.bungeeban.banstore.MySQLBanStore;
 import net.craftminecraft.bungee.bungeeban.util.MainConfig;
 import net.craftminecraft.bungee.bungeeban.util.Utils;
-import net.craftminecraft.bungee.bungeeyaml.InvalidConfigurationException;
+import net.craftminecraft.bungee.bungeeyaml.bukkitapi.InvalidConfigurationException;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
