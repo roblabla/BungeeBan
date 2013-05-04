@@ -204,6 +204,74 @@ public class MySQLBanStore implements IBanStore {
 	}
 
 	@Override
+	public BanEntry isBanned(String player, String server) {
+		PreparedStatement stmt;
+		try {
+			stmt = connection.prepare("SELECT * FROM bungeeban_playerbans WHERE banned = ? " +
+				    "AND server = ?");
+			stmt.setString(1, player);
+			stmt.setString(2, server);
+			ResultSet rs = connection.query(stmt);
+			
+			if (rs.first()) {
+					try {
+						BanEntry.Builder builder = new BanEntry.Builder(rs.getString("banned"))
+							.created(dateFormat.parse(rs.getString("created")))
+							.server(rs.getString("server"))
+							.reason(rs.getString("reason"))
+							.source(rs.getString("source"));
+						if (rs.getNString("expiry") != null) {
+							builder.expiry(dateFormat.parse(rs.getNString("expiry")));
+						}
+						return builder.build();
+					} catch (ParseException e) {
+						logger.severe("Invalid date format for entry " + rs.getString("banned") +
+							":" + rs.getString("server"));
+						return null;
+					}
+			}
+		} catch (SQLException e) {
+			logger.severe("isBanned failed, " + e.getMessage());
+			return null;
+		}
+		return null;
+	}
+
+	@Override
+	public BanEntry isIPBanned(String ip, String server) {
+		PreparedStatement stmt;
+		try {
+			stmt = connection.prepare("SELECT * FROM bungeeban_ipbans WHERE player = ? AND server = ?");
+			stmt.setString(1, ip);
+			stmt.setString(2, server);
+			ResultSet rs = connection.query(stmt);
+			
+			if (rs.first()) {
+					try {
+						BanEntry.Builder builder = new BanEntry.Builder(rs.getString("banned"))
+							.created(dateFormat.parse(rs.getString("created")))
+							.server(rs.getString("server"))
+							.reason(rs.getString("reason"))
+							.source(rs.getString("source"));
+						if (rs.getNString("expiry") != null) {
+							builder.expiry(dateFormat.parse(rs.getNString("expiry")));
+						}
+						return builder.ipban().build();
+					} catch (ParseException e) {
+						logger.severe("Invalid date format for entry " + rs.getString("banned") +
+							":" + rs.getString("server"));
+						return null;
+					}
+			}
+			
+			return null;
+		} catch (SQLException e) {
+			logger.severe("Global UnbanIP failed, " + e.getMessage());
+			return null;
+		}
+	}
+	
+	@Override
 	public void reloadBanList() {
 		return;
 	}

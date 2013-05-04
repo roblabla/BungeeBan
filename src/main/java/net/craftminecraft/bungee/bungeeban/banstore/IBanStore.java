@@ -43,6 +43,9 @@ public interface IBanStore {
 	Table<String,String,BanEntry> getBanList();
 	Table<String,String,BanEntry> getIPBanList();
 	
+	BanEntry isBanned(String player, String server);
+	BanEntry isIPBanned(String ip, String server);
+	
 	/**
 	 * Reloads the list of bans from whatever storage into memory.
 	 * If no list is kept in memory, should just return without doing anything.
