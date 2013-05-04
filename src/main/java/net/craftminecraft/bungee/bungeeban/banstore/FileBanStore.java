@@ -87,6 +87,18 @@ public class FileBanStore implements IBanStore {
 		return ipBanned;
 	}
 	
+	@Override
+	public BanEntry isBanned(String player, String server) {
+		removeExpired();
+		return playerBanned.get(player, server);
+	}
+
+	@Override
+	public BanEntry isIPBanned(String ip, String server) {
+		removeExpired();
+		return ipBanned.get(ip, server);
+	}
+	
 	private void save() {
         try {
         	//save player bans

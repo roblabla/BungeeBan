@@ -60,9 +60,9 @@ public class BanManager {
 
 	public static BanEntry getBan(String playerorip, String server) {
 		if (isIP(playerorip)) {
-			return banstore.getIPBanList().get(playerorip, server);
+			return banstore.isIPBanned(playerorip, server);
 		} else {
-			return banstore.getBanList().get(playerorip.toLowerCase(), server);
+			return banstore.isBanned(playerorip.toLowerCase(), server);
 		}
 	}
 
