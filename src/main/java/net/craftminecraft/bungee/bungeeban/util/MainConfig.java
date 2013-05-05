@@ -61,6 +61,23 @@ public class MainConfig extends Config {
 	public String database_username = "root";
 	public String database_password = "foobar";
 
+	public boolean commands_Migrate = true;
+	public boolean commands_BanList = true;
+	public boolean commands_Lookup = true;
+	public boolean commands_ReloadBans = true;
+	public boolean commands_Ban = true;
+	public boolean commands_TempBan = true;
+	public boolean commands_GBan = true;
+	public boolean commands_GTempBan = true;
+	public boolean commands_Unban = true;
+	public boolean commands_BanIp = true;
+	public boolean commands_TempBanIp = true;
+	public boolean commands_GBanIp = true;
+	public boolean commands_GTempBanIp = true;
+	public boolean commands_UnbanIp = true;
+	public boolean commands_GUnban = true;
+	public boolean commands_GUnbanIp = true;
+	
 	public boolean gunbanRemovesLocalBans = false;
 	
 	public boolean defaults_reasonExtend = false;

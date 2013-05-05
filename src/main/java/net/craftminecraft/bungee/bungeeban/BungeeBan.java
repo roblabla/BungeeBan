@@ -49,22 +49,24 @@ public class BungeeBan extends Plugin {
 		}
 		ProxyServer.getInstance().getPluginManager().registerListener(this, new ProxiedPlayerListener(this));
 		ProxyServer.getInstance().getPluginManager().registerListener(this, new PluginMessageListener());
-		ProxyServer.getInstance().getPluginManager().registerCommand(this, new MigrateCommand(this));
-		ProxyServer.getInstance().getPluginManager().registerCommand(this, new BanListCommand());
-		ProxyServer.getInstance().getPluginManager().registerCommand(this, new LookupCommand());
-		ProxyServer.getInstance().getPluginManager().registerCommand(this, new ReloadBansCommand());
-		ProxyServer.getInstance().getPluginManager().registerCommand(this, new BanCommand());
-		ProxyServer.getInstance().getPluginManager().registerCommand(this, new TempBanCommand());
-		ProxyServer.getInstance().getPluginManager().registerCommand(this, new GBanCommand());
-		ProxyServer.getInstance().getPluginManager().registerCommand(this, new GTempBanCommand());
-		ProxyServer.getInstance().getPluginManager().registerCommand(this, new UnbanCommand());
-		ProxyServer.getInstance().getPluginManager().registerCommand(this, new BanIpCommand());
-		ProxyServer.getInstance().getPluginManager().registerCommand(this, new TempBanIpCommand());
-		ProxyServer.getInstance().getPluginManager().registerCommand(this, new GBanIpCommand());
-		ProxyServer.getInstance().getPluginManager().registerCommand(this, new GTempBanIpCommand());
-		ProxyServer.getInstance().getPluginManager().registerCommand(this, new UnbanIpCommand());
-		ProxyServer.getInstance().getPluginManager().registerCommand(this, new GUnbanCommand());
-		ProxyServer.getInstance().getPluginManager().registerCommand(this, new GUnbanIpCommand());
+		
+		if(config.commands_Migrate) ProxyServer.getInstance().getPluginManager().registerCommand(this, new MigrateCommand(this));
+		if(config.commands_BanList) ProxyServer.getInstance().getPluginManager().registerCommand(this, new BanListCommand());
+		if(config.commands_Lookup) ProxyServer.getInstance().getPluginManager().registerCommand(this, new LookupCommand());
+		if(config.commands_ReloadBans) ProxyServer.getInstance().getPluginManager().registerCommand(this, new ReloadBansCommand());
+		if(config.commands_Ban) ProxyServer.getInstance().getPluginManager().registerCommand(this, new BanCommand());
+		if(config.commands_TempBan) ProxyServer.getInstance().getPluginManager().registerCommand(this, new TempBanCommand());
+		if(config.commands_GBan) ProxyServer.getInstance().getPluginManager().registerCommand(this, new GBanCommand());
+		if(config.commands_GTempBan) ProxyServer.getInstance().getPluginManager().registerCommand(this, new GTempBanCommand());
+		if(config.commands_Unban) ProxyServer.getInstance().getPluginManager().registerCommand(this, new UnbanCommand());
+		if(config.commands_BanIp) ProxyServer.getInstance().getPluginManager().registerCommand(this, new BanIpCommand());
+		if(config.commands_TempBanIp) ProxyServer.getInstance().getPluginManager().registerCommand(this, new TempBanIpCommand());
+		if(config.commands_GBanIp) ProxyServer.getInstance().getPluginManager().registerCommand(this, new GBanIpCommand());
+		if(config.commands_GTempBanIp) ProxyServer.getInstance().getPluginManager().registerCommand(this, new GTempBanIpCommand());
+		if(config.commands_UnbanIp) ProxyServer.getInstance().getPluginManager().registerCommand(this, new UnbanIpCommand());
+		if(config.commands_GUnban) ProxyServer.getInstance().getPluginManager().registerCommand(this, new GUnbanCommand());
+		if(config.commands_GUnbanIp) ProxyServer.getInstance().getPluginManager().registerCommand(this, new GUnbanIpCommand());
+			
 		getLogger().log(Level.INFO,"Now loaded.");
 	}
 
