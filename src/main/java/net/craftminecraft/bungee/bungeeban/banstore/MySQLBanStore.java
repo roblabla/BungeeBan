@@ -114,7 +114,7 @@ public class MySQLBanStore implements IBanStore {
 	public boolean unbanIP(String ip, String server) {
 		PreparedStatement stmt;
 		try {
-			stmt = connection.prepare("DELETE FROM bungeeban_ipbans WHERE player = ? AND server = ?");
+			stmt = connection.prepare("DELETE FROM bungeeban_ipbans WHERE banned = ? AND server = ?");
 			stmt.setString(1, ip);
 			stmt.setString(2, server);
 			connection.query(stmt);
@@ -129,7 +129,7 @@ public class MySQLBanStore implements IBanStore {
 	public boolean gunbanIP(String ip) {
 		PreparedStatement stmt;
 		try {
-			stmt = connection.prepare("DELETE FROM bungeeban_ipbans WHERE player = ? AND server = '(GLOBAL)'");
+			stmt = connection.prepare("DELETE FROM bungeeban_ipbans WHERE banned = ? AND server = '(GLOBAL)'");
 			stmt.setString(1, ip);
 			connection.query(stmt);
 			return true;
@@ -198,7 +198,7 @@ public class MySQLBanStore implements IBanStore {
 			}
 			return entries;
 		} catch (SQLException e) {
-			logger.severe("getBanList failed, " + e.getMessage());
+			logger.severe("getIpBanList failed, " + e.getMessage());
 			return null;
 		}
 	}
@@ -241,7 +241,7 @@ public class MySQLBanStore implements IBanStore {
 	public BanEntry isIPBanned(String ip, String server) {
 		PreparedStatement stmt;
 		try {
-			stmt = connection.prepare("SELECT * FROM bungeeban_ipbans WHERE player = ? AND server = ?");
+			stmt = connection.prepare("SELECT * FROM bungeeban_ipbans WHERE banned = ? AND server = ?");
 			stmt.setString(1, ip);
 			stmt.setString(2, server);
 			ResultSet rs = connection.query(stmt);
@@ -266,7 +266,7 @@ public class MySQLBanStore implements IBanStore {
 			
 			return null;
 		} catch (SQLException e) {
-			logger.severe("Global UnbanIP failed, " + e.getMessage());
+			logger.severe("isIpBanned failed, " + e.getMessage());
 			return null;
 		}
 	}
