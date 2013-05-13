@@ -13,6 +13,7 @@ import net.craftminecraft.bungee.bungeeban.banstore.BanEntry;
 import net.craftminecraft.bungee.bungeeban.banstore.IBanStore;
 import net.craftminecraft.bungee.bungeeban.util.MainConfig;
 import net.craftminecraft.bungee.bungeeban.util.Utils;
+import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -35,7 +36,7 @@ public class BanManager {
 		if (entry.isGlobal()) {
 			gkick(entry.getBanned(), Utils.formatMessage(entry.getReason(), entry));
 		} else {
-			kick(entry.getBanned(), entry.getServer(), Utils.formatMessage(entry.getReason(), entry));
+			silentKick(entry.getBanned(), entry.getServer(), Utils.formatMessage(entry.getReason(), entry));
 		}
 		
 		String type = "ban";
@@ -183,23 +184,23 @@ public class BanManager {
 		}
 		return false;
 	}
-	
-	public static void kick(String playerorip, String server) {
-		kick(playerorip, server, "You have been kicked");
+
+	public static void silentKick(String playerorip, String server) {
+		silentKick(playerorip, server, "You have been kicked");
 	}
 	
-	public static void kick(String playerorip, String server, String reason) {
+	public static void silentKick(String playerorip, String server, String reason) {
 		ServerInfo info = ProxyServer.getInstance().getServerInfo(server);
 		if (info != null) {
-			kick(playerorip, info, reason);
+			silentKick(playerorip, info, reason);
 		}
 	}
 	
-	public static void kick(String playerorip, ServerInfo server) {
-		kick(playerorip, server, "You have been kicked");
+	public static void silentKick(String playerorip, ServerInfo server) {
+		silentKick(playerorip, server, "You have been kicked");
 	}
 	
-	public static void kick(String playerorip, ServerInfo server, String reason) {
+	public static void silentKick(String playerorip, ServerInfo server, String reason) {
 		ArrayList<ProxiedPlayer> tokick = new ArrayList<ProxiedPlayer>();
 		for (ProxiedPlayer player : server.getPlayers()) {
 			if (player.getName().equalsIgnoreCase(playerorip)
@@ -207,12 +208,20 @@ public class BanManager {
 				tokick.add(player);
 			}
 		}
-		for (ProxiedPlayer player : tokick) {
-			player.disconnect(reason);
+		ServerInfo kicksrv = ProxyServer.getInstance().getServerInfo(MainConfig.getInstance().defaults_kickto);
+		if (MainConfig.getInstance().defaults_localkickmove && kicksrv != null) {
+			for (ProxiedPlayer player : tokick) {
+				player.connect(kicksrv);
+				player.sendMessage(ChatColor.RED + "You have been kicked : " + reason);
+			}
+		} else {
+			for (ProxiedPlayer player : tokick) {
+				player.disconnect(reason);
+			}
 		}
 		tokick.clear();
 	}
-	
+
 	public static void gkick(String playerorip) {
 		gkick(playerorip, "You have been kicked");
 	}

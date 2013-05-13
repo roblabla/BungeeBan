@@ -1,11 +1,14 @@
 package net.craftminecraft.bungee.bungeeban.listener;
 
+import java.util.logging.Level;
+
 import com.google.common.eventbus.Subscribe;
 
 import net.craftminecraft.bungee.bungeeban.BanManager;
 import net.craftminecraft.bungee.bungeeban.BungeeBan;
 import net.craftminecraft.bungee.bungeeban.banstore.BanEntry;
 import net.craftminecraft.bungee.bungeeban.util.Utils;
+import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.Server;
 import net.md_5.bungee.api.event.LoginEvent;
 import net.md_5.bungee.api.event.ServerConnectEvent;
@@ -23,17 +26,24 @@ public class ProxiedPlayerListener implements Listener {
 		plugin.getProxy().getScheduler().runAsync(plugin, new Runnable() {
 			@Override
 			public void run() {
-				BanEntry ban = BanManager.getBan(e.getConnection().getName(), "(GLOBAL)");
-				if (ban != null) {
-					e.setCancelled(true);
-					e.setCancelReason(Utils.formatMessage(ban.getReason(), ban));
+				try {
+					BanEntry ban = BanManager.getBan(e.getConnection().getName(), "(GLOBAL)");
+					if (ban != null) {
+						e.setCancelled(true);
+						String reason = Utils.formatMessage(ban.getReason(), ban);
+						e.setCancelReason(reason != null ? reason : "");
+					}
+					ban = BanManager.getBan(e.getConnection().getAddress().getAddress().getHostAddress(), "(GLOBAL)");
+					if (ban != null) {
+			            e.setCancelled(true);
+						String reason = Utils.formatMessage(ban.getReason(), ban);
+						e.setCancelReason(reason != null ? reason : "");
+					}
+				} catch (Throwable t) {
+					plugin.getLogger().log(Level.SEVERE, "An exception has occured !", t);
+				} finally {
+					e.completeIntent(plugin);
 				}
-				ban = BanManager.getBan(e.getConnection().getAddress().getAddress().getHostAddress(), "(GLOBAL)");
-				if (ban != null) {
-		            e.setCancelled(true);
-		            e.setCancelReason(Utils.formatMessage(ban.getReason(), ban));
-				}
-				e.completeIntent(plugin);
 			}
 		});
 	}
@@ -44,18 +54,20 @@ public class ProxiedPlayerListener implements Listener {
 		if (ban != null) {
 			// Ugly workaround the player joined... player left messages
 			Server srv = e.getPlayer().getServer();
+			ServerInfo target = e.getTarget();
 			if (srv != null)
 				e.setTarget(srv.getInfo());
-			e.getPlayer().disconnect(Utils.formatMessage(ban.getReason(), ban));
+			BanManager.silentKick(e.getPlayer().getName(), target,Utils.formatMessage(ban.getReason(), ban));
 			return;
 		} 
 		ban = BanManager.getBan(e.getPlayer().getAddress().getAddress().getHostAddress(), e.getTarget().getName());
 		if (ban != null) {
 			// Ugly workaround the player joined... player left messages
 			Server srv = e.getPlayer().getServer();
+			ServerInfo target = e.getTarget();
 			if (srv != null)
 				e.setTarget(srv.getInfo());
-			e.getPlayer().disconnect(Utils.formatMessage(ban.getReason(), ban));
+			BanManager.silentKick(e.getPlayer().getName(), target,Utils.formatMessage(ban.getReason(), ban));
 		}
 		return;
 	}
