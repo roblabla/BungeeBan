@@ -4,7 +4,8 @@ import java.io.File;
 import java.util.logging.Level;
 
 import net.craftminecraft.bungee.bungeeban.BungeeBan;
-import net.craftminecraft.bungee.bungeeyaml.InvalidConfigurationException;
+import net.craftminecraft.bungee.bungeeyaml.bukkitapi.InvalidConfigurationException;
+import net.craftminecraft.bungee.bungeeyaml.supereasyconfig.Comment;
 import net.craftminecraft.bungee.bungeeyaml.supereasyconfig.Config;
 
 public class MainConfig extends Config {
@@ -54,22 +55,35 @@ public class MainConfig extends Config {
 		}
 	}
 
+	@Comment("How to store the bans. Can either be mysql or file") 
 	public String storagetype = "file";
+	
+	@Comment("The details of the database. Only needed for mysql store")
 	public String database_address = "localhost";
 	public int database_port = 3306;
 	public String database_name = "minecraft";
 	public String database_username = "root";
 	public String database_password = "foobar";
 
+	@Comment("Should /gunban also remove local bans (along with global ones).")
 	public boolean gunbanRemovesLocalBans = false;
-	
+
+	@Comment("Should you put this to true, default reason can contain %reason%, and\n" +
+			"setting a reason on ban will still use the default. Example : \n" +
+			"banreason: 'Banned for %reason%'\n" +
+			"/ban spamming\n" +
+			"Will ban with reason 'Banned for spamming'")
 	public boolean defaults_reasonExtend = false;
 	public String defaults_banreason = "Banned by an operator.";
 	public String defaults_gbanreason = "Banned by an operator.";
 	public String defaults_tempbanreason = "Banned by an operator for %until%.";
 	public String defaults_gtempbanreason = "Banned by an operator for %until%.";
 	public String defaults_tempbantime = "1d";
+	@Comment("Set this to true to redirect player to server defined in kickto instead of kicking for local kicks")
+	public boolean defaults_localkickmove = false;
+	public String defaults_kickto = "lobby";
 
+	@Comment("Should messages for /ban sent to every server, or just server on which ban occured.")
 	public boolean message_sendLocalMsgGlobally = false;
 	public String message_ban = "%source% banned %banned% from %server% for %reason%";
 	public String message_banip = "%source% banned %banned% from %server% for %reason%";
