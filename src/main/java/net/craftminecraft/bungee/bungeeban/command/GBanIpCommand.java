@@ -3,6 +3,7 @@ package net.craftminecraft.bungee.bungeeban.command;
 
 import net.craftminecraft.bungee.bungeeban.BanManager;
 import net.craftminecraft.bungee.bungeeban.banstore.BanEntry;
+import net.craftminecraft.bungee.bungeeban.banstore.SimpleBanEntry;
 import net.craftminecraft.bungee.bungeeban.util.Utils;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
@@ -15,14 +16,14 @@ public class GBanIpCommand extends Command {
 	
 	@Override
 	public void execute(CommandSender sender, String[] args) {
-		BanEntry.Builder newban;
+		SimpleBanEntry.Builder newban;
 		if (args.length < 1) {
 			sender.sendMessage(ChatColor.RED + "Wrong command format. <required> [optional]");
 			sender.sendMessage(ChatColor.RED + "/gbanip <username/ip> [reason]");
 			return;
 		}
 
-		newban = new BanEntry.Builder(args[0])
+		newban = new SimpleBanEntry.Builder(args[0])
 					.global()
 					.source(sender.getName());
 		

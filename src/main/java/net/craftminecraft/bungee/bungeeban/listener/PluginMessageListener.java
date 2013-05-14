@@ -10,6 +10,7 @@ import com.google.common.eventbus.Subscribe;
 
 import net.craftminecraft.bungee.bungeeban.BanManager;
 import net.craftminecraft.bungee.bungeeban.banstore.BanEntry;
+import net.craftminecraft.bungee.bungeeban.banstore.SimpleBanEntry;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.Server;
 import net.md_5.bungee.api.event.PluginMessageEvent;
@@ -29,53 +30,53 @@ public class PluginMessageListener implements Listener {
 		try {
 			String method = datastream.readUTF();
 			if (method.equalsIgnoreCase("ban")) {
-				BanEntry.Builder entry = new BanEntry.Builder(datastream.readUTF());
+				SimpleBanEntry.Builder entry = new SimpleBanEntry.Builder(datastream.readUTF());
 				entry.server(datastream.readUTF())
 					.source(datastream.readUTF())
 					.reason(datastream.readUTF());
 				BanManager.ban(entry.build());
 				return;
 			} else if(method.equalsIgnoreCase("banip")) {
-				BanEntry.Builder entry = new BanEntry.Builder(datastream.readUTF())
+				SimpleBanEntry.Builder entry = new SimpleBanEntry.Builder(datastream.readUTF())
 										.server(datastream.readUTF())
 										.source(datastream.readUTF())
 										.reason(datastream.readUTF());
 				BanManager.ban(entry.build());
 			} else if (method.equalsIgnoreCase("gban")) {
-				BanEntry.Builder entry = new BanEntry.Builder(datastream.readUTF())
+				SimpleBanEntry.Builder entry = new SimpleBanEntry.Builder(datastream.readUTF())
 										.global()
 										.source(datastream.readUTF())
 										.reason(datastream.readUTF());
 				BanManager.ban(entry.build());
 			} else if (method.equalsIgnoreCase("gbanip")) {
-				BanEntry.Builder entry = new BanEntry.Builder(datastream.readUTF())
+				SimpleBanEntry.Builder entry = new SimpleBanEntry.Builder(datastream.readUTF())
 										.global()
 										.source(datastream.readUTF())
 										.reason(datastream.readUTF());
 				BanManager.ban(entry.build());
 			} else if (method.equalsIgnoreCase("gtempban")) {
-				BanEntry.Builder entry = new BanEntry.Builder(datastream.readUTF())
+				SimpleBanEntry.Builder entry = new SimpleBanEntry.Builder(datastream.readUTF())
 										.global()
 										.source(datastream.readUTF())
 										.reason(datastream.readUTF())
 										.expiry(dateFormat.parse(datastream.readUTF()));
 				BanManager.ban(entry.build());
 			} else if (method.equalsIgnoreCase("gtempbanip")) {
-				BanEntry.Builder entry = new BanEntry.Builder(datastream.readUTF())
+				SimpleBanEntry.Builder entry = new SimpleBanEntry.Builder(datastream.readUTF())
 										.global()
 										.source(datastream.readUTF())
 										.reason(datastream.readUTF())
 										.expiry(dateFormat.parse(datastream.readUTF()));
 				BanManager.ban(entry.build());
 			} else if (method.equalsIgnoreCase("tempban")) {
-				BanEntry.Builder entry = new BanEntry.Builder(datastream.readUTF())
+				SimpleBanEntry.Builder entry = new SimpleBanEntry.Builder(datastream.readUTF())
 										.server(datastream.readUTF())
 										.source(datastream.readUTF())
 										.reason(datastream.readUTF())
 										.expiry(dateFormat.parse(datastream.readUTF()));
 				BanManager.ban(entry.build());
 			} else if (method.equalsIgnoreCase("tempbanip")) {
-				BanEntry.Builder entry = new BanEntry.Builder(datastream.readUTF())
+				SimpleBanEntry.Builder entry = new SimpleBanEntry.Builder(datastream.readUTF())
 										.server(datastream.readUTF())
 										.source(datastream.readUTF())
 										.reason(datastream.readUTF())

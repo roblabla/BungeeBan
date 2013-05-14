@@ -2,6 +2,7 @@ package net.craftminecraft.bungee.bungeeban.command;
 
 import net.craftminecraft.bungee.bungeeban.BanManager;
 import net.craftminecraft.bungee.bungeeban.banstore.BanEntry;
+import net.craftminecraft.bungee.bungeeban.banstore.SimpleBanEntry;
 import net.craftminecraft.bungee.bungeeban.util.Utils;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
@@ -19,7 +20,7 @@ public class TempBanCommand extends Command {
 	@Override
 	public void execute(CommandSender sender, String[] args) {
 		ProxiedPlayer player = null;
-		BanEntry.Builder newban;
+		SimpleBanEntry.Builder newban;
 		
 		if (sender instanceof ProxiedPlayer) {
 			player = (ProxiedPlayer) sender;
@@ -37,7 +38,7 @@ public class TempBanCommand extends Command {
 			}
 		}
 
-		newban = new BanEntry.Builder(args[0])
+		newban = new SimpleBanEntry.Builder(args[0])
 					.source(sender.getName())
 					.expiry();
 		
