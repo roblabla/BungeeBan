@@ -11,6 +11,7 @@ import com.google.common.collect.ImmutableList;
 
 import net.craftminecraft.bungee.bungeeban.banstore.BanEntry;
 import net.craftminecraft.bungee.bungeeban.banstore.IBanStore;
+import net.craftminecraft.bungee.bungeeban.banstore.SimpleBanEntry;
 import net.craftminecraft.bungee.bungeeban.util.MainConfig;
 import net.craftminecraft.bungee.bungeeban.util.Utils;
 import net.md_5.bungee.api.ChatColor;
@@ -100,7 +101,7 @@ public class BanManager {
 	}
 
 	public static boolean gunban(String playerorip) {
-		BanEntry.Builder builder = new BanEntry.Builder(playerorip.toLowerCase()).global();
+		SimpleBanEntry.Builder builder = new SimpleBanEntry.Builder(playerorip.toLowerCase()).global();
 		BanEntry entry;
 		if (isIP(playerorip)) {
 			entry = builder.ipban().build();
@@ -155,7 +156,7 @@ public class BanManager {
 	}
 	
 	public static boolean unban(String playerorip, String server) {
-		BanEntry.Builder builder = new BanEntry.Builder(playerorip.toLowerCase(), server);
+		SimpleBanEntry.Builder builder = new SimpleBanEntry.Builder(playerorip.toLowerCase(), server);
 		BanEntry entry;
 		if (isIP(playerorip)) {
 			entry = builder.ipban().build();

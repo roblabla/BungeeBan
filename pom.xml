@@ -15,21 +15,11 @@
   </profiles>
   <groupId>net.craftminecraft.bungee</groupId>
   <artifactId>bungeeban</artifactId>
-  <version>0.6-SNAPSHOT</version>
+  <version>0.7-SNAPSHOT</version>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
   <repositories>
-    <repository>
-      <id>sonatype-oss-public</id>
-      <url>https://oss.sonatype.org/content/groups/public/</url>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-    </repository>
     <repository>
       <id>craftminecraft-dev</id>
       <url>http://repo.craftminecraft.net/content/groups/public/</url>
@@ -42,9 +32,14 @@
   	  <version>1.5-SNAPSHOT</version>
   	</dependency>
   	<dependency>
-  	  <groupId>net.craftminecraft.bungee</groupId>
-  	  <artifactId>sqlibrary</artifactId>
-  	  <version>4.2</version>
+  	  <groupId>com.jolbox</groupId>
+  	  <artifactId>bonecp</artifactId>
+  	  <version>0.8.0-rc1</version>
+  	</dependency>
+  	<dependency>
+  	  <groupId>org.javalite</groupId>
+  	  <artifactId>activejdbc</artifactId>
+  	  <version>1.4.7</version>
   	</dependency>
   	<dependency>
   	  <groupId>net.craftminecraft.bungee</groupId>
@@ -70,6 +65,49 @@
           <target>1.7</target>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>org.javalite</groupId>
+        <artifactId>activejdbc-instrumentation</artifactId>
+        <version>1.4.7</version>
+        <executions>
+          <execution>
+            <phase>process-classes</phase>
+            <goals>
+              <goal>instrument</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
+    <pluginManagement> 
+      <plugins> 
+        <!--This plugin's configuration is used to store Eclipse m2e 
+settings only. It has no influence on the Maven build itself.--> 
+        <plugin> 
+          <groupId>org.eclipse.m2e</groupId> 
+          <artifactId>lifecycle-mapping</artifactId> 
+          <version>1.0.0</version> 
+          <configuration> 
+            <lifecycleMappingMetadata> 
+              <pluginExecutions> 
+                <pluginExecution> 
+                  <pluginExecutionFilter> 
+                    <groupId>org.javalite</groupId> 
+                    <artifactId>activejdbc-instrumentation</artifactId> 
+                    <versionRange>[1.2-SNAPSHOT,)</versionRange>
+                    <goals> 
+                      <goal>instrument</goal> 
+                    </goals> 
+                  </pluginExecutionFilter> 
+                  <action> 
+                    <execute/> 
+                  </action> 
+                </pluginExecution> 
+              </pluginExecutions> 
+            </lifecycleMappingMetadata> 
+          </configuration> 
+        </plugin> 
+      </plugins> 
+    </pluginManagement>
   </build>
 </project>

@@ -145,7 +145,7 @@ public class FileBanStore implements IBanStore {
 
 	private BanEntry entryFromFile(String line, boolean ipban) {
 		String[] astring = line.trim().split(Pattern.quote("|"));
-		BanEntry.Builder banentry = new BanEntry.Builder(astring[0].trim()).global().ipban(ipban);
+		SimpleBanEntry.Builder banentry = new SimpleBanEntry.Builder(astring[0].trim()).global().ipban(ipban);
 
 		// Support old-style banlist, one username per line.
 	    if (astring.length == 1)
