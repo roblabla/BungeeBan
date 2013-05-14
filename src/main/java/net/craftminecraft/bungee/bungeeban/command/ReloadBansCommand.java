@@ -8,26 +8,35 @@ import net.craftminecraft.bungee.bungeeyaml.bukkitapi.InvalidConfigurationExcept
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.plugin.Command;
+import net.md_5.bungee.api.plugin.Plugin;
 
 public class ReloadBansCommand extends Command {
+	private Plugin plugin;
 
-	public ReloadBansCommand() {
+	public ReloadBansCommand(Plugin plugin) {
 		super("reloadbans");
+		this.plugin = plugin;
 	}
 
 	@Override
-	public void execute(CommandSender sender, String[] args) {
-		if (!Utils.hasPermission(sender, "reloadbans", "")) {
-			sender.sendMessage(ChatColor.RED + "You don't have permission to do this.");
-			return;
-		}
-		BanManager.reload();
-		try {
-			MainConfig.getInstance().reload();
-		} catch (InvalidConfigurationException e) {
-			sender.sendMessage(ChatColor.RED + "There is an error in your config.yml.");
-			return;
-		}
-		sender.sendMessage(ChatColor.RED + "Reloaded banlist.");
+	public void execute(final CommandSender sender, final String[] args) {
+		plugin.getProxy().getScheduler().runAsync(plugin, new Runnable() {
+			
+			@Override
+			public void run() {
+				if (!Utils.hasPermission(sender, "reloadbans", "")) {
+					sender.sendMessage(ChatColor.RED + "You don't have permission to do this.");
+					return;
+				}
+				BanManager.reload();
+				try {
+					MainConfig.getInstance().reload();
+				} catch (InvalidConfigurationException e) {
+					sender.sendMessage(ChatColor.RED + "There is an error in your config.yml.");
+					return;
+				}
+				sender.sendMessage(ChatColor.RED + "Reloaded banlist.");
+			}
+		});
 	}
 }
