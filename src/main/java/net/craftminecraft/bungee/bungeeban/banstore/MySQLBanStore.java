@@ -60,6 +60,10 @@ public class MySQLBanStore implements IBanStore {
 		} catch (SQLException e) {
 			logger.log(Level.SEVERE, "Failed to create database table. No bans will be stored", e);
 			return;
+		} finally {
+			try {
+				connection.close();
+			} catch (SQLException e) { }
 		}
 	}
 	
