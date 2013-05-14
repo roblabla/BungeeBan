@@ -51,7 +51,7 @@ public class MySQLBanStore implements IBanStore {
 										"server VARCHAR(50))");
 			} if (!(isTable("bungeeban_ipbans", connection))) {
 				Statement statement = connection.createStatement();
-				statement.execute("CREATE TABLE bungeeban_playerbans (id INT PRIMARY KEY AUTO_INCREMENT, banned VARCHAR(16)," +
+				statement.execute("CREATE TABLE bungeeban_ipbans (id INT PRIMARY KEY AUTO_INCREMENT, banned VARCHAR(16)," +
 										"source VARCHAR(50), created VARCHAR(50)," +
 										"expiry VARCHAR(50), reason VARCHAR(150)," +
 										"server VARCHAR(50))");
