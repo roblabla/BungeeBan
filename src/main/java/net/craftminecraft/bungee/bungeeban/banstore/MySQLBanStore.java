@@ -35,7 +35,7 @@ public class MySQLBanStore implements IBanStore {
 	public MySQLBanStore(Logger logger, MainConfig config) {
 		this.logger = logger;
 		BoneCPConfig bonecpconfig = new BoneCPConfig();
-		bonecpconfig.setJdbcUrl("jdbc:mysql://" + config.database_address + ":" + config.database_port + "/" + config.database_address);
+		bonecpconfig.setJdbcUrl("jdbc:mysql://" + config.database_address + ":" + config.database_port + "/" + config.database_name);
 		bonecpconfig.setUsername(config.database_username);
 		bonecpconfig.setPassword(config.database_password);
 		bonecp = new BoneCPDataSource(bonecpconfig);
