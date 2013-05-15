@@ -146,7 +146,7 @@ public class MySQLBanStore implements IBanStore {
 		if (!Base.hasConnection()) {
 			Base.open(bonecp);
 		}
-		List<SqlPlayerBanEntry> entries = SqlPlayerBanEntry.where("player = ? AND server = ?", player, server);
+		List<SqlPlayerBanEntry> entries = SqlPlayerBanEntry.where("banned = ? AND server = ?", player, server);
 		if (entries.size() < 1) {
 			return null;
 		}
@@ -158,7 +158,7 @@ public class MySQLBanStore implements IBanStore {
 		if (!Base.hasConnection()) {
 			Base.open(bonecp);
 		}
-		List<SqlIPBanEntry> entries = SqlIPBanEntry.where("player = ? AND server = ?", ip, server);
+		List<SqlIPBanEntry> entries = SqlIPBanEntry.where("banned = ? AND server = ?", ip, server);
 		if (entries.size() < 1) {
 			return null;
 		}
