@@ -1,8 +1,7 @@
 package net.craftminecraft.bungee.bungeeban.listener;
 
 import java.util.logging.Level;
-
-import com.google.common.eventbus.Subscribe;
+import java.util.logging.Logger;
 
 import net.craftminecraft.bungee.bungeeban.BanManager;
 import net.craftminecraft.bungee.bungeeban.BungeeBan;
@@ -13,6 +12,7 @@ import net.md_5.bungee.api.connection.Server;
 import net.md_5.bungee.api.event.LoginEvent;
 import net.md_5.bungee.api.event.ServerConnectEvent;
 import net.md_5.bungee.api.plugin.Listener;
+import net.md_5.bungee.event.EventHandler;
 
 public class ProxiedPlayerListener implements Listener {
 	private BungeeBan plugin;
@@ -20,7 +20,7 @@ public class ProxiedPlayerListener implements Listener {
 		this.plugin = plugin;
 	}
 	
-	@Subscribe
+	@EventHandler
 	public void onPlayerJoin(final LoginEvent e) {
 		e.registerIntent(plugin);
 		plugin.getProxy().getScheduler().runAsync(plugin, new Runnable() {
@@ -42,13 +42,21 @@ public class ProxiedPlayerListener implements Listener {
 				} catch (Throwable t) {
 					plugin.getLogger().log(Level.SEVERE, "An exception has occured !", t);
 				} finally {
-					e.completeIntent(plugin);
+                    while (!e.getFired().get()) {
+                        try {
+                            Thread.sleep(100);
+                        } catch (InterruptedException ex) {
+                            Thread.currentThread().interrupt();
+                            break;
+                        }
+                    }
+                    e.completeIntent(plugin);
 				}
 			}
 		});
 	}
 	
-	@Subscribe
+	@EventHandler
 	public void onServerConnect(ServerConnectEvent e) {
 		BanEntry ban = BanManager.getBan(e.getPlayer().getName(), e.getTarget().getName());
 		if (ban != null) {
