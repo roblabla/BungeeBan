@@ -28,10 +28,11 @@ import com.jolbox.bonecp.BoneCPDataSource;
 import net.craftminecraft.bungee.bungeeban.util.MainConfig;
 
 public class MySQLBanStore implements IBanStore {
-    public static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z");
-    private Logger logger;
-    private BoneCPDataSource bonecp;
-    
+
+	public static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z");
+	private Logger logger;
+	private BoneCPDataSource bonecp;
+
 	public MySQLBanStore(Logger logger, MainConfig config) {
 		this.logger = logger;
 		BoneCPConfig bonecpconfig = new BoneCPConfig();
@@ -45,17 +46,18 @@ public class MySQLBanStore implements IBanStore {
 		try {
 			if (!(isTable("bungeeban_playerbans", connection))) {
 				Statement statement = connection.createStatement();
-				statement.execute("CREATE TABLE bungeeban_playerbans (id INT PRIMARY KEY AUTO_INCREMENT, banned VARCHAR(16)," +
-										"source VARCHAR(50), created VARCHAR(50)," +
-										"expiry VARCHAR(50), reason VARCHAR(150)," +
-										"server VARCHAR(50))");
-			} if (!(isTable("bungeeban_ipbans", connection))) {
+				statement.execute("CREATE TABLE bungeeban_playerbans (id INT PRIMARY KEY AUTO_INCREMENT, banned VARCHAR(16),"
+					+ "source VARCHAR(50), created VARCHAR(50),"
+					+ "expiry VARCHAR(50), reason VARCHAR(150),"
+					+ "server VARCHAR(50))");
+			}
+			if (!(isTable("bungeeban_ipbans", connection))) {
 				Statement statement = connection.createStatement();
-				statement.execute("CREATE TABLE bungeeban_ipbans (id INT PRIMARY KEY AUTO_INCREMENT, banned VARCHAR(16)," +
-										"source VARCHAR(50), created VARCHAR(50)," +
-										"expiry VARCHAR(50), reason VARCHAR(150)," +
-										"server VARCHAR(50))");
-				
+				statement.execute("CREATE TABLE bungeeban_ipbans (id INT PRIMARY KEY AUTO_INCREMENT, banned VARCHAR(16),"
+					+ "source VARCHAR(50), created VARCHAR(50),"
+					+ "expiry VARCHAR(50), reason VARCHAR(150),"
+					+ "server VARCHAR(50))");
+
 			}
 		} catch (SQLException e) {
 			logger.log(Level.SEVERE, "Failed to create database table. No bans will be stored", e);
@@ -63,10 +65,11 @@ public class MySQLBanStore implements IBanStore {
 		} finally {
 			try {
 				connection.close();
-			} catch (SQLException e) { }
+			} catch (SQLException e) {
+			}
 		}
 	}
-	
+
 	@Override
 	public boolean ban(BanEntry entry) {
 		if (!Base.hasConnection()) {
@@ -114,11 +117,11 @@ public class MySQLBanStore implements IBanStore {
 	}
 
 	@Override
-	public Table<String,String,BanEntry> getBanList() {
+	public Table<String, String, BanEntry> getBanList() {
 		if (!Base.hasConnection()) {
 			Base.open(bonecp);
 		}
-		Table<String,String,BanEntry> returnval = HashBasedTable.create();
+		Table<String, String, BanEntry> returnval = HashBasedTable.create();
 		List<SqlPlayerBanEntry> entries = SqlPlayerBanEntry.findAll();
 		for (SqlPlayerBanEntry entry : entries) {
 			BanEntry beentry = entry.toBanEntry();
@@ -128,11 +131,11 @@ public class MySQLBanStore implements IBanStore {
 	}
 
 	@Override
-	public Table<String,String,BanEntry> getIPBanList() {
+	public Table<String, String, BanEntry> getIPBanList() {
 		if (!Base.hasConnection()) {
 			Base.open(bonecp);
 		}
-		Table<String,String,BanEntry> returnval = HashBasedTable.create();
+		Table<String, String, BanEntry> returnval = HashBasedTable.create();
 		List<SqlIPBanEntry> entries = SqlIPBanEntry.findAll();
 		for (SqlIPBanEntry entry : entries) {
 			BanEntry beentry = entry.toBanEntry();
@@ -164,14 +167,14 @@ public class MySQLBanStore implements IBanStore {
 		}
 		return entries.get(0).toBanEntry();
 	}
-	
+
 	@Override
 	public void reloadBanList() {
 		return;
 	}
 
 	private boolean isTable(String table, Connection connection) {
-	    Statement statement;
+		Statement statement;
 		try {
 			statement = connection.createStatement();
 		} catch (SQLException e) {
@@ -187,6 +190,7 @@ public class MySQLBanStore implements IBanStore {
 	}
 
 	public abstract static class SqlBanEntry extends Model implements BanEntry {
+
 		@Override
 		public String getBanned() {
 			return this.getString("banned");
@@ -261,16 +265,16 @@ public class MySQLBanStore implements IBanStore {
 		@Override
 		public BanEntry toBanEntry() {
 			return new SimpleBanEntry.Builder()
-						   .banned(this.getBanned())
-						   .server(this.getServer())
-						   .created(this.getCreated())
-						   .expiry(this.getExpiry())
-						   .reason(this.getReason())
-						   .source(this.getSource())
-						   .ipban()
-						   .build();	
+				.banned(this.getBanned())
+				.server(this.getServer())
+				.created(this.getCreated())
+				.expiry(this.getExpiry())
+				.reason(this.getReason())
+				.source(this.getSource())
+				.ipban()
+				.build();
 		}
-		
+
 		public static SqlPlayerBanEntry fromBanEntry(BanEntry entry) {
 			if (entry == null) {
 				return null;
@@ -286,27 +290,28 @@ public class MySQLBanStore implements IBanStore {
 			return sqlentry;
 		}
 	}
-	
+
 	@org.javalite.activejdbc.annotations.Table("bungeeban_ipbans")
 	public static class SqlIPBanEntry extends SqlPlayerBanEntry {
+
 		@Override
 		public boolean isIPBan() {
 			return true;
 		}
-		
+
 		@Override
 		public BanEntry toBanEntry() {
 			return new SimpleBanEntry.Builder()
-						   .banned(this.getBanned())
-						   .server(this.getServer())
-						   .created(this.getCreated())
-						   .expiry(this.getExpiry())
-						   .reason(this.getReason())
-						   .source(this.getSource())
-						   .ipban()
-						   .build();
+				.banned(this.getBanned())
+				.server(this.getServer())
+				.created(this.getCreated())
+				.expiry(this.getExpiry())
+				.reason(this.getReason())
+				.source(this.getSource())
+				.ipban()
+				.build();
 		}
-		
+
 		public static SqlIPBanEntry fromBanEntry(BanEntry entry) {
 			if (entry == null) {
 				return null;
@@ -321,6 +326,5 @@ public class MySQLBanStore implements IBanStore {
 			sqlentry.setString("source", entry.getSource());
 			return sqlentry;
 		}
-
 	}
 }

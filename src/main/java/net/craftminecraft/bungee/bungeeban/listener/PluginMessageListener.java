@@ -15,11 +15,12 @@ import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.Server;
 import net.md_5.bungee.api.event.PluginMessageEvent;
 import net.md_5.bungee.api.plugin.Listener;
+import net.md_5.bungee.event.EventHandler;
 
 public class PluginMessageListener implements Listener {
 	private static SimpleDateFormat dateFormat = new SimpleDateFormat("d'd'k'h'm'm's's'");
 
-	@Subscribe
+	@EventHandler
 	public void onPluginmessage(PluginMessageEvent e) {
 		// Checks if the one sending the message is the server.
 		if (e.getTag() != "BungeeBan" || !(e.getSender() instanceof Server))
